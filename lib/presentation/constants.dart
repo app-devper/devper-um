@@ -9,3 +9,4 @@ const String USER_ADD_ROUTE = '/um-user-add';
 const String USER_EDIT_ROUTE = '/um-user-edit';
 const String USER_INFO_ROUTE = '/um-user-info';
 const String LANDING_ROUTE = '/um-landing';
+const String ERROR_ROUTE = '/um-error';
