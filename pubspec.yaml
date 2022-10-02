@@ -1,0 +1,46 @@
+name: um
+description: A new Flutter module project.
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.17.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.2
+  shared_preferences: ^2.0.5
+  common:
+    git:
+      url: git@github.com:app-devper/common.git
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^2.0.0
+
+publish_to: none
+
+flutter:
+
+  uses-material-design: true
+
+  assets:
+    - config/
+    - packages/um/images/logo.png
+
+  fonts:
+    - family: Roboto
+      fonts:
+        - asset: packages/common/font/roboto_regular.ttf
+        - asset: packages/common/font/roboto_bold.ttf
+          weight: 700
+
+  module:
+    androidX: true
+    androidPackage: com.devper.module.um
+    iosBundleIdentifier: com.devper.module.um

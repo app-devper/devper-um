@@ -1,0 +1,7 @@
+{
+  "apiUrl": "https://um-api-th3taayg7q-as.a.run.app",
+  "logo": "packages/um/images/logo.png",
+  "name": "หน้าหลัก",
+  "system": "POS",
+  "home": "/um-home"
+}
