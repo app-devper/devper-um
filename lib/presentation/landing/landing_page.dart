@@ -49,7 +49,11 @@ class _LandingPageState extends State<LandingPage> {
     _viewModel = sl<LandingViewModel>();
     _viewModel.states.stream.listen((state) {
       if (state is SystemState) {
-        Navigator.pushNamedAndRemoveUntil(context, _config.home, (r) => false);
+        if (state.data.systemCode == _config.system) {
+          Navigator.pushNamedAndRemoveUntil(context, _config.home, (r) => false);
+        } else {
+          Navigator.pushNamedAndRemoveUntil(context, ERROR_ROUTE, (r) => false);
+        }
       } else if (state is ErrorState) {
         Navigator.pushNamedAndRemoveUntil(context, ERROR_ROUTE, (r) => false);
       }
