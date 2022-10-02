@@ -30,7 +30,7 @@ class _MyAppState extends State<DevperUm> {
       debugShowCheckedModeBanner: false,
       title: 'DevperUM',
       theme: CustomTheme.mainTheme,
-      onGenerateRoute: RouterApp.generateRoute,
+      onGenerateRoute: RouterUm.generateRoute,
       initialRoute: LOGIN_ROUTE,
       locale: const Locale("th"),
       localizationsDelegates: [

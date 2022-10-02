@@ -11,7 +11,7 @@ import 'user/edit/user_edit_page.dart';
 import 'user/info/user_info_page.dart';
 import 'user/main/users_page.dart';
 
-class RouterApp {
+class RouterUm {
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case LOGIN_ROUTE:
