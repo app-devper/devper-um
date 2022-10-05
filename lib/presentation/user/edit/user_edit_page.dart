@@ -1,4 +1,3 @@
-
 import 'package:common/core/utils/extension.dart';
 import 'package:common/core/widget/button_widget.dart';
 import 'package:common/core/widget/custom_snack_bar.dart';
@@ -13,9 +12,9 @@ import 'user_edit_state.dart';
 import 'user_edit_view_model.dart';
 
 class UserEditPage extends StatefulWidget {
-  final User user;
+  final String userId;
 
-  UserEditPage({required this.user});
+  UserEditPage({super.key, required this.userId});
 
   @override
   State<StatefulWidget> createState() => _UserEditPageState();
@@ -56,11 +55,14 @@ class _UserEditPageState extends State<UserEditPage> {
           _snackBar.hideAll();
         });
         showLoadingDialog(context);
+      } else if (state is GetUserState) {
+        hideLoadingDialog(context);
+        _setupUser(state.data);
       } else if (state is UpdateUserState) {
         hideLoadingDialog(context);
         WidgetsBinding.instance.addPostFrameCallback((_) {
           _snackBar.hideAll();
-          _snackBar.showSnackBar(text: "Update " + state.data.username + " success");
+          _snackBar.showSnackBar(text: "Update ${state.data.username} success");
         });
       } else if (state is RemoveUserState) {
         hideLoadingDialog(context);
@@ -69,8 +71,7 @@ class _UserEditPageState extends State<UserEditPage> {
     });
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _setupUser(widget.user);
-      _viewModel.getUserById(widget.user.id);
+      _viewModel.getUserById(widget.userId);
     });
   }
 
@@ -118,7 +119,7 @@ class _UserEditPageState extends State<UserEditPage> {
     return [
       IconButton(
         onPressed: () {
-          _showRemoveUserConfirm(context, widget.user);
+          _showRemoveUserConfirm(context, _usernameEditingController.text);
         },
         icon: Icon(Icons.delete),
       ),
@@ -305,9 +306,9 @@ class _UserEditPageState extends State<UserEditPage> {
     );
   }
 
-  _showRemoveUserConfirm(BuildContext context, User user) {
-    showConfirmDialog(context, "แจ้งเตือน", "ต้องการลบผู้ใช้งาน " + user.username + " ใช่หรือไม่?", () {
-      _viewModel.removeUserById(user.id);
+  _showRemoveUserConfirm(BuildContext context, String username) {
+    showConfirmDialog(context, "แจ้งเตือน", "ต้องการลบผู้ใช้งาน $username ใช่หรือไม่?", () {
+      _viewModel.removeUserById(widget.userId);
     });
   }
 
@@ -320,7 +321,7 @@ class _UserEditPageState extends State<UserEditPage> {
         onClicked: () {
           FocusScope.of(context).requestFocus(_viewNode);
           _viewModel.updateUserById(UpdateUserParam(
-            userId: widget.user.id,
+            userId: widget.userId,
             userParam: _getUserParam(),
           ));
         },

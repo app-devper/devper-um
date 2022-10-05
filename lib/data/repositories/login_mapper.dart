@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:um/domain/model/auth/login.dart';
 import 'package:um/domain/model/auth/param.dart';
+import 'package:um/domain/model/system/system.dart';
 
 class LoginMapper {
   String toLoginRequest(LoginParam param) {
@@ -15,6 +16,16 @@ class LoginMapper {
   toLoginDomain(Map<String, dynamic> json) {
     return Login(
       accessToken: json['accessToken']
+    );
+  }
+
+  System toSystemDomain(Map<String, dynamic> json) {
+    return System(
+        id: json['id'],
+        clientId: json['clientId'],
+        systemName: json['systemName'],
+        systemCode: json['systemCode'],
+        host: json['host']
     );
   }
 

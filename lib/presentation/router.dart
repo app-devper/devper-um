@@ -26,11 +26,11 @@ class RouterUm {
         return MaterialPageRoute(builder: (_) => UserAddPage());
       case USER_EDIT_ROUTE:
         final args = settings.arguments as UserArgument;
-        return MaterialPageRoute(builder: (_) => UserEditPage(user: args.user));
+        return MaterialPageRoute(builder: (_) => UserEditPage(userId: args.user.id));
       case USER_HOME_ROUTE:
         return MaterialPageRoute(builder: (_) => UsersPage());
       case LANDING_ROUTE:
-        return MaterialPageRoute(builder: (_) => const LandingPage());
+        return MaterialPageRoute(builder: (_) => LandingPage());
       default:
         return MaterialPageRoute(builder: (_) => ErrorPage());
     }

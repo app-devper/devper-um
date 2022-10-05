@@ -6,7 +6,6 @@ import 'package:common/data/local/local_datasource.dart';
 import 'package:common/data/network/exception.dart';
 import 'package:um/data/datasource/network/um_service.dart';
 import 'package:um/data/repositories/login_mapper.dart';
-import 'package:um/data/repositories/system_mapper.dart';
 import 'package:um/domain/model/auth/login.dart';
 import 'package:um/domain/model/auth/param.dart';
 import 'package:um/domain/model/system/system.dart';
@@ -81,7 +80,7 @@ class LoginRepositoryImpl implements LoginRepository {
 
   @override
   Future<System> getSystem() async {
-    var mapper = SystemMapper();
+    var mapper = LoginMapper();
     final response = await service.getSystem();
     if (response.isSuccessful) {
       final result = mapper.toSystemDomain(jsonDecode(response.body));

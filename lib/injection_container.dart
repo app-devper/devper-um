@@ -21,7 +21,7 @@ import 'package:um/domain/usecases/auth/get_login.dart';
 import 'package:um/domain/usecases/auth/get_role.dart';
 import 'package:um/domain/usecases/auth/login_user.dart';
 import 'package:um/domain/usecases/auth/logout_user.dart';
-import 'package:um/domain/usecases/system/get_system.dart';
+import 'package:um/domain/usecases/auth/get_system.dart';
 import 'package:um/domain/usecases/user/change_password.dart';
 import 'package:um/domain/usecases/user/create_user.dart';
 import 'package:um/domain/usecases/user/get_user_by_id.dart';

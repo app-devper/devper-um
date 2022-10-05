@@ -7,7 +7,7 @@ import 'package:um/presentation/landing/landing_state.dart';
 import 'package:um/presentation/landing/landing_view_model.dart';
 
 class LandingPage extends StatefulWidget {
-  const LandingPage({Key? key}) : super(key: key);
+  LandingPage({super.key});
 
   @override
   State<LandingPage> createState() => _LandingPageState();
