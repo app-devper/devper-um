@@ -16,12 +16,6 @@ class ListUserState extends UsersState {
   ListUserState({required this.data});
 }
 
-class UpdateUserState extends UsersState {
-  final User data;
-
-  UpdateUserState({required this.data});
-}
-
 class ErrorState extends UsersState {
   final String message;
 

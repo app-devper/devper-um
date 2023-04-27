@@ -5,7 +5,9 @@ import 'package:flutter/foundation.dart';
 class AppNetworkConfig extends NetworkConfig {
   final AppSessionProvider appSession;
 
-  AppNetworkConfig({required this.appSession});
+  AppNetworkConfig({
+    required this.appSession,
+  });
 
   @override
   Map<String, String> getHeaders(Uri uri) {

@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:um/presentation/constants.dart';
 import 'package:um/presentation/router.dart';
-import 'injection_container.dart' as di;
+import 'package:um/container.dart' as di;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -13,10 +13,12 @@ void main() async {
   di.setupLogging();
   await di.initCore(config);
   await di.initUm();
-  runApp(DevperUm());
+  runApp(const DevperUm());
 }
 
 class DevperUm extends StatefulWidget {
+  const DevperUm({super.key});
+
   @override
   State<StatefulWidget> createState() {
     return _MyAppState();

@@ -6,13 +6,14 @@ import 'package:common/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:um/domain/model/auth/param.dart';
-import 'package:um/injection_container.dart';
+import 'package:um/container.dart';
 import 'package:um/presentation/constants.dart';
-
-import 'login_state.dart';
-import 'login_view_model.dart';
+import 'package:um/presentation/login/login_state.dart';
+import 'package:um/presentation/login/login_view_model.dart';
 
 class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
+
   @override
   State<StatefulWidget> createState() => _LoginPageState();
 }
@@ -59,6 +60,7 @@ class _LoginPageState extends State<LoginPage> {
         });
       }
     });
+
     _viewModel.fetchToken();
   }
 

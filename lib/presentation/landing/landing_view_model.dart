@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:common/core/error/failures.dart';
-import 'package:um/domain/model/system/system.dart';
-import 'package:um/domain/model/user/param.dart';
+import 'package:um/domain/model/auth/param.dart';
+import 'package:um/domain/model/auth/system.dart';
 import 'package:um/domain/usecases/auth/get_system.dart';
 import 'package:um/presentation/landing/landing_state.dart';
 
@@ -17,7 +17,7 @@ class LandingViewModel {
   StreamController<LandingState> get states => _states;
 
   void getSystem() {
-    getSystemUseCase(Param()).then((value) => {
+    getSystemUseCase(SystemParam()).then((value) => {
           value.fold((l) {
             _onError(l);
           }, (r) {

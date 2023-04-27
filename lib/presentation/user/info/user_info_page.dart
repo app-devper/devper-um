@@ -1,5 +1,3 @@
-
-
 import 'package:common/core/utils/extension.dart';
 import 'package:common/core/widget/button_widget.dart';
 import 'package:common/core/widget/custom_snack_bar.dart';
@@ -7,13 +5,14 @@ import 'package:common/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:um/domain/model/user/param.dart';
 import 'package:um/domain/model/user/user.dart';
-import 'package:um/injection_container.dart';
+import 'package:um/container.dart';
 import 'package:um/presentation/constants.dart';
-
-import 'user_info_state.dart';
-import 'user_info_view_model.dart';
+import 'package:um/presentation/user/info/user_info_state.dart';
+import 'package:um/presentation/user/info/user_info_view_model.dart';
 
 class UserInfoPage extends StatefulWidget {
+  const UserInfoPage({super.key});
+
   @override
   State<StatefulWidget> createState() => _UserInfoPageState();
 }
@@ -92,7 +91,7 @@ class _UserInfoPageState extends State<UserInfoPage> {
         backgroundColor: CustomColor.white,
         centerTitle: true,
         title: Text(
-            "User Info",
+          "User Info",
           style: CustomTheme.mainTheme.textTheme.headline5,
         ),
         brightness: Brightness.light,

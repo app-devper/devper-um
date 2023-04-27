@@ -1,5 +1,3 @@
-
-
 import 'package:um/domain/model/user/user.dart';
 
 abstract class UserInfoState {}

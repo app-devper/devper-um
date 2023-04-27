@@ -5,8 +5,7 @@ import 'package:um/domain/model/user/user.dart';
 import 'package:um/domain/usecases/user/get_user_by_id.dart';
 import 'package:um/domain/usecases/user/remove_user_by_id.dart';
 import 'package:um/domain/usecases/user/update_user_by_id.dart';
-
-import 'user_edit_state.dart';
+import 'package:um/presentation/user/edit/user_edit_state.dart';
 
 class UserEditViewModel {
   final GetUserById getUserByIdUseCase;
@@ -24,6 +23,7 @@ class UserEditViewModel {
   StreamController<UserEditState> get states => _states;
 
   void getUserById(String userId) {
+    _onLoading();
     getUserByIdUseCase(userId).then((value) => {
           value.fold((l) {
             _onError(l);

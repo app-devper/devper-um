@@ -136,7 +136,6 @@ Future<void> initUm() async {
   sl.registerFactory(() => CreateUser(repository: sl()));
   sl.registerFactory(() => ChangePassword(repository: sl()));
 
-
   // Repositories
   sl.registerLazySingleton<LoginRepository>(
     () => LoginRepositoryImpl(

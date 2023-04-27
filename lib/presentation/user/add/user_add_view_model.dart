@@ -4,8 +4,7 @@ import 'package:common/core/error/failures.dart';
 import 'package:um/domain/model/user/param.dart';
 import 'package:um/domain/model/user/user.dart';
 import 'package:um/domain/usecases/user/create_user.dart';
-
-import 'user_add_state.dart';
+import 'package:um/presentation/user/add/user_add_state.dart';
 
 class UserAddViewModel {
   final CreateUser createUserUseCase;

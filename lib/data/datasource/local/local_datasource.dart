@@ -4,7 +4,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 class LocalDataSourceImpl extends LocalDataSource {
   final SharedPreferences sharedPreferences;
 
-  LocalDataSourceImpl({required this.sharedPreferences});
+  LocalDataSourceImpl({
+    required this.sharedPreferences,
+  });
 
   @override
   Future<void> cacheToken(String accessToken) {

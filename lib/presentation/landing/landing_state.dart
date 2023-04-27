@@ -1,4 +1,4 @@
-import 'package:um/domain/model/system/system.dart';
+import 'package:um/domain/model/auth/system.dart';
 
 abstract class LandingState {}
 

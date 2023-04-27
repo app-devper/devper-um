@@ -1,13 +1,13 @@
 import 'package:common/app_config.dart';
 import 'package:flutter/material.dart';
 import 'package:common/theme.dart';
-import 'package:um/injection_container.dart';
+import 'package:um/container.dart';
 import 'package:um/presentation/constants.dart';
 import 'package:um/presentation/landing/landing_state.dart';
 import 'package:um/presentation/landing/landing_view_model.dart';
 
 class LandingPage extends StatefulWidget {
-  LandingPage({super.key});
+  const LandingPage({super.key});
 
   @override
   State<LandingPage> createState() => _LandingPageState();
@@ -19,11 +19,8 @@ class _LandingPageState extends State<LandingPage> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async => false,
-      child: Scaffold(
-        body: _buildLoading(),
-      ),
+    return Scaffold(
+      body: _buildLoading(),
     );
   }
 

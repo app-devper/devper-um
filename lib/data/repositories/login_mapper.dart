@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:um/domain/model/auth/login.dart';
 import 'package:um/domain/model/auth/param.dart';
-import 'package:um/domain/model/system/system.dart';
+import 'package:um/domain/model/auth/system.dart';
 
 class LoginMapper {
   String toLoginRequest(LoginParam param) {

@@ -1,7 +1,6 @@
-import 'package:um/domain/model/user/user.dart';
 
 class UserArgument {
-  final User user;
+  final String userId;
 
-  UserArgument(this.user);
+  UserArgument(this.userId);
 }

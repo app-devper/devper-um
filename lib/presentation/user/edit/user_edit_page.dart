@@ -5,16 +5,16 @@ import 'package:common/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:um/domain/model/user/param.dart';
 import 'package:um/domain/model/user/user.dart';
-import 'package:um/injection_container.dart';
+import 'package:um/container.dart';
 import 'package:um/presentation/constants.dart';
+import 'package:um/presentation/user/edit/user_edit_state.dart';
+import 'package:um/presentation/user/edit/user_edit_view_model.dart';
 
-import 'user_edit_state.dart';
-import 'user_edit_view_model.dart';
 
 class UserEditPage extends StatefulWidget {
   final String userId;
 
-  UserEditPage({super.key, required this.userId});
+  const UserEditPage({super.key, required this.userId});
 
   @override
   State<StatefulWidget> createState() => _UserEditPageState();
@@ -88,7 +88,7 @@ class _UserEditPageState extends State<UserEditPage> {
 
   @override
   Widget build(BuildContext context) {
-    _snackBar = CustomSnackBar(key: Key("snackbar"), context: context);
+    _snackBar = CustomSnackBar(key: const Key("snackbar"), context: context);
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
@@ -121,19 +121,19 @@ class _UserEditPageState extends State<UserEditPage> {
         onPressed: () {
           _showRemoveUserConfirm(context, _usernameEditingController.text);
         },
-        icon: Icon(Icons.delete),
+        icon: const Icon(Icons.delete),
       ),
     ];
   }
 
   _buildBody(BuildContext context) {
     return SingleChildScrollView(
-      padding: EdgeInsets.all(DEFAULT_PAGE_PADDING),
+      padding: const EdgeInsets.all(DEFAULT_PAGE_PADDING),
       child: Container(
         child: Column(
           children: <Widget>[
             _buildForm(context),
-            Padding(
+            const Padding(
               padding: EdgeInsets.only(top: DEFAULT_PAGE_PADDING),
             ),
             _buildUpdateButton(context),
@@ -146,7 +146,7 @@ class _UserEditPageState extends State<UserEditPage> {
   _buildForm(BuildContext context) {
     return Column(
       children: <Widget>[
-        Padding(
+        const Padding(
           padding: EdgeInsets.only(top: 12),
         ),
         _buildUsernameField(
@@ -157,7 +157,7 @@ class _UserEditPageState extends State<UserEditPage> {
           TextInputType.text,
           _firstNameNode,
         ),
-        Padding(
+        const Padding(
           padding: EdgeInsets.only(top: 12),
         ),
         _buildTextFormField(
@@ -168,7 +168,7 @@ class _UserEditPageState extends State<UserEditPage> {
           TextInputType.text,
           _lastNameNode,
         ),
-        Padding(
+        const Padding(
           padding: EdgeInsets.only(top: 12),
         ),
         _buildTextFormField(
@@ -179,7 +179,7 @@ class _UserEditPageState extends State<UserEditPage> {
           TextInputType.text,
           _phoneNode,
         ),
-        Padding(
+        const Padding(
           padding: EdgeInsets.only(top: 12),
         ),
         _buildTextFormField(
@@ -190,7 +190,7 @@ class _UserEditPageState extends State<UserEditPage> {
           TextInputType.phone,
           _emailNode,
         ),
-        Padding(
+        const Padding(
           padding: EdgeInsets.only(top: 12),
         ),
         _buildTextFormField(
@@ -222,21 +222,21 @@ class _UserEditPageState extends State<UserEditPage> {
         controller: controller,
         keyboardType: textInputType,
         decoration: InputDecoration(
-          focusedBorder: new OutlineInputBorder(
-            borderRadius: new BorderRadius.circular(4.0),
-            borderSide: new BorderSide(
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(4.0),
+            borderSide: const BorderSide(
               color: CustomColor.textFieldBackground,
             ),
           ),
-          border: new OutlineInputBorder(
-            borderRadius: new BorderRadius.circular(4.0),
-            borderSide: new BorderSide(
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(4.0),
+            borderSide: const BorderSide(
               color: CustomColor.textFieldBackground,
             ),
           ),
-          enabledBorder: new OutlineInputBorder(
-            borderRadius: new BorderRadius.circular(4.0),
-            borderSide: new BorderSide(
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(4.0),
+            borderSide: const BorderSide(
               color: CustomColor.textFieldBackground,
             ),
           ),
@@ -273,21 +273,21 @@ class _UserEditPageState extends State<UserEditPage> {
         controller: controller,
         keyboardType: textInputType,
         decoration: InputDecoration(
-          focusedBorder: new OutlineInputBorder(
-            borderRadius: new BorderRadius.circular(4.0),
-            borderSide: new BorderSide(
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(4.0),
+            borderSide: const BorderSide(
               color: CustomColor.textFieldBackground,
             ),
           ),
-          border: new OutlineInputBorder(
-            borderRadius: new BorderRadius.circular(4.0),
-            borderSide: new BorderSide(
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(4.0),
+            borderSide: const BorderSide(
               color: CustomColor.textFieldBackground,
             ),
           ),
-          enabledBorder: new OutlineInputBorder(
-            borderRadius: new BorderRadius.circular(4.0),
-            borderSide: new BorderSide(
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(4.0),
+            borderSide: const BorderSide(
               color: CustomColor.textFieldBackground,
             ),
           ),
@@ -317,7 +317,7 @@ class _UserEditPageState extends State<UserEditPage> {
       width: double.infinity,
       height: 50,
       child: ButtonWidget(
-        key: Key("Update"),
+        key: const Key("Update"),
         onClicked: () {
           FocusScope.of(context).requestFocus(_viewNode);
           _viewModel.updateUserById(UpdateUserParam(

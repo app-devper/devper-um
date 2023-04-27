@@ -8,9 +8,8 @@ import 'package:um/data/datasource/network/um_service.dart';
 import 'package:um/data/repositories/login_mapper.dart';
 import 'package:um/domain/model/auth/login.dart';
 import 'package:um/domain/model/auth/param.dart';
-import 'package:um/domain/model/system/system.dart';
+import 'package:um/domain/model/auth/system.dart';
 import 'package:um/domain/repositories/login_repository.dart';
-
 
 class LoginRepositoryImpl implements LoginRepository {
   final UmService service;
@@ -18,7 +17,7 @@ class LoginRepositoryImpl implements LoginRepository {
 
   LoginRepositoryImpl({
     required this.service,
-    required this.localDataSource
+    required this.localDataSource,
   });
 
   @override
@@ -70,7 +69,7 @@ class LoginRepositoryImpl implements LoginRepository {
   }
 
   @override
-  Future<String> getToken() async{
+  Future<String> getToken() async {
     final accessToken = await localDataSource.getLastToken();
     if (accessToken.isEmpty) {
       throw AppException("Please login");

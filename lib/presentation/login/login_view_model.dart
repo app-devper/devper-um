@@ -5,8 +5,7 @@ import 'package:um/domain/model/auth/login.dart';
 import 'package:um/domain/model/auth/param.dart';
 import 'package:um/domain/usecases/auth/fetch_token.dart';
 import 'package:um/domain/usecases/auth/login_user.dart';
-
-import 'login_state.dart';
+import 'package:um/presentation/login/login_state.dart';
 
 class LoginViewModel {
   final LoginUser loginUserUseCase;

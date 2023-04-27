@@ -3,8 +3,7 @@ import 'dart:async';
 import 'package:common/core/error/failures.dart';
 import 'package:um/domain/model/user/param.dart';
 import 'package:um/domain/usecases/user/change_password.dart';
-
-import 'change_password_state.dart';
+import 'package:um/presentation/user/change_password/change_password_state.dart';
 
 class ChangePasswordViewModel {
   final ChangePassword changePasswordUseCase;

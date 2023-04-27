@@ -1,4 +1,3 @@
-
 import 'package:common/core/utils/extension.dart';
 import 'package:common/core/widget/button_widget.dart';
 import 'package:common/core/widget/custom_snack_bar.dart';
@@ -6,13 +5,15 @@ import 'package:common/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:um/domain/model/user/param.dart';
-import 'package:um/injection_container.dart';
+import 'package:um/container.dart';
 import 'package:um/presentation/constants.dart';
 
-import 'change_password_state.dart';
-import 'change_password_view_model.dart';
+import 'package:um/presentation/user/change_password/change_password_state.dart';
+import 'package:um/presentation/user/change_password/change_password_view_model.dart';
 
 class ChangePasswordPage extends StatefulWidget {
+  const ChangePasswordPage({super.key});
+
   @override
   State<StatefulWidget> createState() => _ChangePasswordPageState();
 }

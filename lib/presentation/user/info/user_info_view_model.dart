@@ -4,8 +4,7 @@ import 'package:um/domain/model/user/param.dart';
 import 'package:um/domain/model/user/user.dart';
 import 'package:um/domain/usecases/user/get_user_info.dart';
 import 'package:um/domain/usecases/user/update_user_info.dart';
-
-import 'user_info_state.dart';
+import 'package:um/presentation/user/info/user_info_state.dart';
 
 class UserInfoViewModel {
   final GetUserInfo getUserInfoUseCase;

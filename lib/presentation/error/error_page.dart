@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:common/theme.dart';
-import 'package:flutter/services.dart';
 
 class ErrorPage extends StatefulWidget {
+  const ErrorPage({super.key});
+
   @override
   State<ErrorPage> createState() => _ErrorPageState();
 }

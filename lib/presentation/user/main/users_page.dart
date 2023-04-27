@@ -1,17 +1,16 @@
-
 import 'package:common/core/widget/custom_snack_bar.dart';
 import 'package:common/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:um/domain/model/user/user.dart';
-import 'package:um/injection_container.dart';
+import 'package:um/container.dart';
 import 'package:um/presentation/constants.dart';
 import 'package:um/presentation/user/argument.dart';
-
-
-import 'users_state.dart';
-import 'users_view_model.dart';
+import 'package:um/presentation/user/main/users_state.dart';
+import 'package:um/presentation/user/main/users_view_model.dart';
 
 class UsersPage extends StatefulWidget {
+  const UsersPage({super.key});
+
   @override
   State<StatefulWidget> createState() => _UsersPageState();
 }
@@ -35,10 +34,7 @@ class _UsersPageState extends State<UsersPage> {
       } else if (state is LoadingState) {
       } else if (state is ListUserState) {
         _viewModel.setUsers(state.data);
-      } else if (state is LoggedState) {
-      } else if (state is UpdateUserState) {
-        _viewModel.getUsers();
-      }
+      } else if (state is LoggedState) {}
     });
 
     _viewModel.getUsers();
@@ -52,7 +48,7 @@ class _UsersPageState extends State<UsersPage> {
 
   @override
   Widget build(BuildContext context) {
-    _snackBar = CustomSnackBar(key: Key("snackbar"), context: context);
+    _snackBar = CustomSnackBar(key: const Key("snackbar"), context: context);
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
@@ -77,7 +73,7 @@ class _UsersPageState extends State<UsersPage> {
         onPressed: () {
           _nextToUserAdd(context);
         },
-        icon: Icon(Icons.add),
+        icon: const Icon(Icons.add),
       ),
     ];
   }
@@ -97,10 +93,10 @@ class _UsersPageState extends State<UsersPage> {
       stream: _viewModel.users.stream,
       builder: (BuildContext context, AsyncSnapshot<List<User>> snapshot) {
         if (snapshot.hasData) {
-          var data = snapshot.data;
-          return _buildUser(data ?? []);
+          var data = snapshot.requireData;
+          return _buildUser(data);
         } else {
-          return Center(
+          return const Center(
             child: CircularProgressIndicator(),
           );
         }
@@ -118,7 +114,7 @@ class _UsersPageState extends State<UsersPage> {
             title: Text(content.username),
             subtitle: Text(content.role),
             onTap: () {
-              _nextToUserEdit(context, content);
+              _nextToUserEdit(context, content.id);
             },
           );
         },
@@ -126,8 +122,8 @@ class _UsersPageState extends State<UsersPage> {
     );
   }
 
-  _nextToUserEdit(BuildContext context, User content) async {
-    var result = await Navigator.pushNamed(context, USER_EDIT_ROUTE, arguments: UserArgument(content));
+  _nextToUserEdit(BuildContext context, String userId) async {
+    var result = await Navigator.pushNamed(context, USER_EDIT_ROUTE, arguments: UserArgument(userId));
     _viewModel.getUsers();
   }
 
