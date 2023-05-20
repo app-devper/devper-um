@@ -87,14 +87,12 @@ class _UserAddPageState extends State<UserAddPage> {
       key: _scaffoldKey,
       appBar: AppBar(
         iconTheme: CustomTheme.mainTheme.iconTheme,
-        textTheme: CustomTheme.mainTheme.textTheme,
         backgroundColor: CustomColor.white,
         centerTitle: true,
         title: Text(
           "Add User",
           style: CustomTheme.mainTheme.textTheme.headline5,
         ),
-        brightness: Brightness.light,
       ),
       body: _buildBody(context),
     );

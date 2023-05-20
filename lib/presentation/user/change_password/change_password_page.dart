@@ -91,14 +91,12 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
         key: _scaffoldKey,
         appBar: AppBar(
           iconTheme: CustomTheme.mainTheme.iconTheme,
-          textTheme: CustomTheme.mainTheme.textTheme,
           backgroundColor: CustomColor.white,
           centerTitle: true,
           title: Text(
             "ChangePassword",
             style: CustomTheme.mainTheme.textTheme.headline5,
           ),
-          brightness: Brightness.light,
         ),
         body: AnnotatedRegion<SystemUiOverlayStyle>(
           value: SystemUiOverlayStyle.dark.copyWith(

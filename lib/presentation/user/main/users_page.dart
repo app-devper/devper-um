@@ -53,7 +53,6 @@ class _UsersPageState extends State<UsersPage> {
       key: _scaffoldKey,
       appBar: AppBar(
         iconTheme: CustomTheme.mainTheme.iconTheme,
-        textTheme: CustomTheme.mainTheme.textTheme,
         backgroundColor: CustomColor.white,
         centerTitle: true,
         title: Text(
@@ -61,7 +60,6 @@ class _UsersPageState extends State<UsersPage> {
           style: CustomTheme.mainTheme.textTheme.headline5,
         ),
         actions: _buildAction(context),
-        brightness: Brightness.light,
       ),
       body: _buildBody(context),
     );

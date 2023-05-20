@@ -62,7 +62,7 @@ Future<void> initCore(AppConfig config) async {
   sl.registerLazySingleton<NetworkConfig>(() => AppNetworkConfig(appSession: sl()));
 
   CustomClient client = CustomClient();
-  client.interceptors = [HttpLoggingInterceptor()];
+  client.addInterceptor(HttpLoggingInterceptor());
   sl.registerLazySingleton<CustomClient>(() => client);
 
   // LocalDataSource

@@ -87,14 +87,12 @@ class _UserInfoPageState extends State<UserInfoPage> {
       key: _scaffoldKey,
       appBar: AppBar(
         iconTheme: CustomTheme.mainTheme.iconTheme,
-        textTheme: CustomTheme.mainTheme.textTheme,
         backgroundColor: CustomColor.white,
         centerTitle: true,
         title: Text(
           "User Info",
           style: CustomTheme.mainTheme.textTheme.headline5,
         ),
-        brightness: Brightness.light,
       ),
       body: _buildBody(context),
     );
