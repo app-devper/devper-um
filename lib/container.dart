@@ -36,7 +36,8 @@ import 'package:um/presentation/user/add/user_add_view_model.dart';
 import 'package:um/presentation/user/change_password/change_password_view_model.dart';
 import 'package:um/presentation/user/edit/user_edit_view_model.dart';
 import 'package:um/presentation/user/info/user_info_view_model.dart';
-import 'package:um/presentation/user/main/users_view_model.dart';
+import 'package:um/presentation/user/list/users_view_model.dart';
+import 'package:um/presentation/user/main/user_home_view_model.dart';
 
 final sl = getIt(); // sl is referred to as Service Locator
 
@@ -90,6 +91,12 @@ Future<void> initUm() async {
     ),
   );
   sl.registerFactory(
+    () => UserHomeViewModel(
+      getLoginUseCase: sl(),
+      logOutUseCase: sl(),
+    ),
+  );
+  sl.registerFactory(
     () => ChangePasswordViewModel(
       changePasswordUseCase: sl(),
     ),
@@ -123,7 +130,7 @@ Future<void> initUm() async {
   sl.registerFactory(() => GetLogin(repository: sl()));
   sl.registerFactory(() => GetRole(repository: sl()));
   sl.registerFactory(() => FetchToken(repository: sl(), appSession: sl()));
-  sl.registerFactory(() => LogOutUser(repository: sl()));
+  sl.registerFactory(() => LogoutUser(repository: sl()));
 
   sl.registerFactory(() => GetSystem(repository: sl(), appSession: sl()));
 

@@ -100,13 +100,13 @@ class _UserAddPageState extends State<UserAddPage> {
 
   _buildBody(BuildContext context) {
     return SingleChildScrollView(
-      padding: EdgeInsets.all(DEFAULT_PAGE_PADDING),
+      padding: EdgeInsets.all(defaultPagePadding),
       child: Container(
         child: Column(
           children: <Widget>[
             _buildForm(context),
             Padding(
-              padding: EdgeInsets.only(top: DEFAULT_PAGE_PADDING),
+              padding: EdgeInsets.only(top: defaultPagePadding),
             ),
             _buildAddButton(context),
           ],

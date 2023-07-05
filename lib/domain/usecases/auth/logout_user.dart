@@ -4,10 +4,10 @@ import 'package:dartz/dartz.dart';
 import 'package:um/domain/model/auth/param.dart';
 import 'package:um/domain/repositories/login_repository.dart';
 
-class LogOutUser implements UseCase<LogOutParams, bool> {
+class LogoutUser implements UseCase<LogOutParams, bool> {
   final LoginRepository repository;
 
-  LogOutUser({required this.repository});
+  LogoutUser({required this.repository});
 
   @override
   Future<Either<Failure, bool>> call(LogOutParams params) async {

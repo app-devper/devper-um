@@ -4,6 +4,8 @@ import 'package:common/core/widget/custom_snack_bar.dart';
 import 'package:common/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
+import 'package:um/core/obscure_state.dart';
 import 'package:um/domain/model/user/param.dart';
 import 'package:um/container.dart';
 import 'package:um/presentation/constants.dart';
@@ -31,18 +33,12 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   late CustomSnackBar _snackBar;
-  late BooleanPrimitiveWrapper _obscureOldPasswordText;
-  late BooleanPrimitiveWrapper _obscurePasswordText;
-  late BooleanPrimitiveWrapper _obscurePasswordConfirmText;
 
   late ChangePasswordViewModel _viewModel;
 
   @override
   void initState() {
     super.initState();
-    _obscureOldPasswordText = BooleanPrimitiveWrapper(true);
-    _obscurePasswordText = BooleanPrimitiveWrapper(true);
-    _obscurePasswordConfirmText = BooleanPrimitiveWrapper(true);
 
     _viewModel = sl<ChangePasswordViewModel>();
     _viewModel.states.stream.listen((state) {
@@ -84,7 +80,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
 
   @override
   Widget build(BuildContext context) {
-    _snackBar = CustomSnackBar(key: Key("snackbar"), context: context);
+    _snackBar = CustomSnackBar(key: const Key("snackbar"), context: context);
     return GestureDetector(
       onTap: () => FocusScope.of(context).requestFocus(_viewNode),
       child: Scaffold(
@@ -113,49 +109,46 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
     return Container(
       height: size.height,
       width: size.width,
-      padding: EdgeInsets.all(DEFAULT_PAGE_PADDING),
+      padding: const EdgeInsets.all(defaultPagePadding),
       child: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
-            Padding(
+            const Padding(
               padding: EdgeInsets.only(top: 12),
             ),
             _buildPasswordField(
               context,
               _oldPasswordNode,
               _oldPasswordController,
-              _obscureOldPasswordText,
               "Old Password*",
               _passwordNode,
             ),
-            Padding(
+            const Padding(
               padding: EdgeInsets.only(top: 12),
             ),
             _buildPasswordField(
               context,
               _passwordNode,
               _passwordController,
-              _obscurePasswordText,
               "New Password*",
               _passwordConfirmNode,
             ),
-            Padding(
+            const Padding(
               padding: EdgeInsets.only(top: 12),
             ),
             _buildPasswordField(
               context,
               _passwordConfirmNode,
               _passwordConfirmController,
-              _obscurePasswordConfirmText,
               "Confirm Password*",
               _viewNode,
             ),
-            Padding(
+            const Padding(
               padding: EdgeInsets.only(top: 14),
             ),
-            Container(
+            SizedBox(
               width: double.infinity,
               height: 50,
               child: _buildChangePasswordButton(),
@@ -168,7 +161,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
 
   _buildChangePasswordButton() {
     return ButtonWidget(
-      key: Key("changePassword"),
+      key: const Key("changePassword"),
       onClicked: () {
         if (_oldPasswordController.text.isNotEmpty && _passwordController.text.isNotEmpty && _passwordConfirmController.text.isNotEmpty) {
           if (_passwordController.text == _passwordConfirmController.text) {
@@ -193,65 +186,61 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
     BuildContext context,
     FocusNode focusNode,
     TextEditingController controller,
-    BooleanPrimitiveWrapper obscureText,
     String labelText,
     FocusNode nextNode,
   ) {
-    final Size size = MediaQuery.of(context).size;
-    return Container(
-      width: size.width,
-      height: 50,
-      child: TextFormField(
-        focusNode: focusNode,
-        controller: controller,
-        obscureText: obscureText.value,
-        keyboardType: TextInputType.visiblePassword,
-        decoration: InputDecoration(
-          focusedBorder: new OutlineInputBorder(
-            borderRadius: new BorderRadius.circular(4.0),
-            borderSide: new BorderSide(
-              color: CustomColor.textFieldBackground,
+    Size size = MediaQuery.of(context).size;
+    return ChangeNotifierProvider(
+      create: (context) => ObscureState(),
+      child: Consumer<ObscureState>(
+        builder: (context, state, child) => SizedBox(
+          width: size.width,
+          height: 50,
+          child: TextFormField(
+            focusNode: focusNode,
+            controller: controller,
+            obscureText: state.isTrue,
+            keyboardType: TextInputType.visiblePassword,
+            decoration: InputDecoration(
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(4.0),
+                borderSide: const BorderSide(
+                  color: CustomColor.textFieldBackground,
+                ),
+              ),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(4.0),
+                borderSide: const BorderSide(
+                  color: CustomColor.textFieldBackground,
+                ),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(4.0),
+                borderSide: const BorderSide(
+                  color: CustomColor.textFieldBackground,
+                ),
+              ),
+              focusColor: CustomColor.hintColor,
+              hoverColor: CustomColor.hintColor,
+              fillColor: CustomColor.textFieldBackground,
+              filled: true,
+              labelText: labelText,
+              labelStyle: CustomTheme.mainTheme.textTheme.bodyText2,
+              suffixIcon: IconButton(
+                icon: state.switchObsIcon,
+                color: CustomColor.hintColor,
+                onPressed: () {
+                  state.toggleObs();
+                },
+              ),
             ),
-          ),
-          border: new OutlineInputBorder(
-            borderRadius: new BorderRadius.circular(4.0),
-            borderSide: new BorderSide(
-              color: CustomColor.textFieldBackground,
-            ),
-          ),
-          enabledBorder: new OutlineInputBorder(
-            borderRadius: new BorderRadius.circular(4.0),
-            borderSide: new BorderSide(
-              color: CustomColor.textFieldBackground,
-            ),
-          ),
-          focusColor: CustomColor.hintColor,
-          hoverColor: CustomColor.hintColor,
-          fillColor: CustomColor.textFieldBackground,
-          filled: true,
-          labelText: labelText,
-          labelStyle: CustomTheme.mainTheme.textTheme.bodyText2,
-          suffixIcon: IconButton(
-            icon: Icon(Icons.remove_red_eye),
-            color: CustomColor.hintColor,
-            onPressed: () {
-              setState(() {
-                obscureText.value = !obscureText.value;
-              });
+            cursorColor: CustomColor.hintColor,
+            onFieldSubmitted: (term) {
+              fieldFocusChange(context, focusNode, nextNode);
             },
           ),
         ),
-        cursorColor: CustomColor.hintColor,
-        onFieldSubmitted: (term) {
-          fieldFocusChange(context, focusNode, nextNode);
-        },
       ),
     );
   }
-}
-
-class BooleanPrimitiveWrapper {
-  bool value;
-
-  BooleanPrimitiveWrapper(this.value);
 }

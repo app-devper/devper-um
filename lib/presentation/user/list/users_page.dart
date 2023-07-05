@@ -5,8 +5,8 @@ import 'package:um/domain/model/user/user.dart';
 import 'package:um/container.dart';
 import 'package:um/presentation/constants.dart';
 import 'package:um/presentation/user/argument.dart';
-import 'package:um/presentation/user/main/users_state.dart';
-import 'package:um/presentation/user/main/users_view_model.dart';
+import 'package:um/presentation/user/list/users_state.dart';
+import 'package:um/presentation/user/list/users_view_model.dart';
 
 class UsersPage extends StatefulWidget {
   const UsersPage({super.key});
@@ -94,8 +94,10 @@ class _UsersPageState extends State<UsersPage> {
           var data = snapshot.requireData;
           return _buildUser(data);
         } else {
-          return const Center(
-            child: CircularProgressIndicator(),
+          return Center(
+            child: CircularProgressIndicator(
+              color: CustomColor.backgroundMain,
+            ),
           );
         }
       },
@@ -121,12 +123,12 @@ class _UsersPageState extends State<UsersPage> {
   }
 
   _nextToUserEdit(BuildContext context, String userId) async {
-    var result = await Navigator.pushNamed(context, USER_EDIT_ROUTE, arguments: UserArgument(userId));
+    var result = await Navigator.pushNamed(context, routeUserEdit, arguments: UserArgument(userId));
     _viewModel.getUsers();
   }
 
   _nextToUserAdd(BuildContext context) async {
-    var result = await Navigator.pushNamed(context, USER_ADD_ROUTE);
+    var result = await Navigator.pushNamed(context, routeUserAdd);
     _viewModel.getUsers();
   }
 }

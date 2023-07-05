@@ -4,7 +4,7 @@ import 'package:common/core/error/failures.dart';
 import 'package:um/domain/model/user/param.dart';
 import 'package:um/domain/model/user/user.dart';
 import 'package:um/domain/usecases/user/get_users.dart';
-import 'package:um/presentation/user/main/users_state.dart';
+import 'package:um/presentation/user/list/users_state.dart';
 
 class UsersViewModel {
   final GetUsers getUsersUseCase;
@@ -47,6 +47,7 @@ class UsersViewModel {
 
   _onError(Failure failure) {
     if (!_states.isClosed) {
+      _users.sink.add(List.empty());
       _states.sink.add(ErrorState(message: failure.error));
     }
   }

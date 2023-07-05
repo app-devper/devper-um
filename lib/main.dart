@@ -33,7 +33,7 @@ class _MyAppState extends State<DevperUm> {
       title: 'DevperUM',
       theme: CustomTheme.mainTheme,
       onGenerateRoute: RouterUm.generateRoute,
-      initialRoute: LOGIN_ROUTE,
+      initialRoute: routeLogin,
       locale: const Locale("th"),
       localizationsDelegates: [
         CommonLocalizationsDelegate(),

@@ -1,24 +1,20 @@
 import 'package:common/app_config.dart';
-import 'package:common/core/utils/extension.dart';
 import 'package:common/core/widget/button_widget.dart';
-import 'package:common/core/widget/custom_snack_bar.dart';
+import 'package:common/core/widget/dialog_widget.dart';
 import 'package:common/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import 'package:um/domain/model/auth/param.dart';
 import 'package:um/container.dart';
 import 'package:um/presentation/constants.dart';
+import 'package:um/core/obscure_state.dart';
+import 'package:um/core/stacked_view.dart';
+
 import 'package:um/presentation/login/login_state.dart';
 import 'package:um/presentation/login/login_view_model.dart';
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
-
-  @override
-  State<StatefulWidget> createState() => _LoginPageState();
-}
-
-class _LoginPageState extends State<LoginPage> {
+class LoginPage extends StackedView<LoginViewModel> {
   final TextEditingController _usernameEditingController = TextEditingController();
   final TextEditingController _passwordEditingController = TextEditingController();
 
@@ -27,59 +23,44 @@ class _LoginPageState extends State<LoginPage> {
   final FocusNode _viewNode = FocusNode();
 
   final _scaffoldKey = GlobalKey<ScaffoldState>();
+  final _config = sl<AppConfig>();
 
-  late CustomSnackBar _snackBar;
-  late bool _obscureText;
-
-  late LoginViewModel _viewModel;
-  late AppConfig _config;
+  LoginPage({super.key});
 
   @override
-  void initState() {
-    super.initState();
-    _obscureText = true;
-    _viewModel = sl<LoginViewModel>();
-    _config = sl<AppConfig>();
-    _viewModel.states.stream.listen((state) {
-      if (state is LoadingState) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          _snackBar.hideAll();
-        });
-        showLoadingDialog(context);
-      } else if (state is LoggedState) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          _snackBar.hideAll();
-        });
-        hideLoadingDialog(context);
-        Navigator.pushNamedAndRemoveUntil(context, LANDING_ROUTE, (r) => false);
-      } else if (state is ErrorState) {
-        hideLoadingDialog(context);
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          _snackBar.hideAll();
-          _snackBar.showErrorSnackBar(state.message);
-        });
-      }
-    });
-
-    _viewModel.fetchToken();
+  void onViewModelReady(LoginViewModel viewModel) {
+    viewModel.fetchToken();
   }
 
   @override
-  void dispose() {
+  LoginViewModel viewModelBuilder(BuildContext context) {
+    final viewModel = sl<LoginViewModel>();
+    viewModel.states.listen((state) {
+      if (state is LoadingState) {
+        showLoadingDialog(context);
+      } else if (state is LoggedState) {
+        hideLoadingDialog(context);
+        Navigator.pushNamedAndRemoveUntil(context, routeLanding, (r) => false);
+      } else if (state is ErrorState) {
+        hideLoadingDialog(context);
+        showAlertDialog(context, message: state.message, onConfirm: () {});
+      }
+    });
+    return viewModel;
+  }
+
+  @override
+  onDispose() {
     _usernameNode.dispose();
     _passwordNode.dispose();
     _viewNode.dispose();
 
     _usernameEditingController.dispose();
     _passwordEditingController.dispose();
-
-    _viewModel.dispose();
-    super.dispose();
   }
 
   @override
-  Widget build(BuildContext context) {
-    _snackBar = CustomSnackBar(key: const Key("snackbar"), context: context);
+  Widget builder(BuildContext context, LoginViewModel viewModel) {
     return GestureDetector(
       onTap: () => FocusScope.of(context).requestFocus(_viewNode),
       child: Scaffold(
@@ -88,19 +69,37 @@ class _LoginPageState extends State<LoginPage> {
           value: SystemUiOverlayStyle.dark.copyWith(
             statusBarColor: CustomColor.statusBarColor,
           ),
-          child: _buildBody(context),
+          child: _buildBody(context, viewModel),
         ),
       ),
     );
   }
 
-  _buildBody(BuildContext context) {
+  _buildBody(BuildContext context, LoginViewModel viewModel) {
+    return StreamBuilder(
+      initialData: true,
+      stream: viewModel.initLoading,
+      builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+        if (snapshot.data ?? true) {
+          return Center(
+            child: CircularProgressIndicator(
+              color: CustomColor.backgroundMain,
+            ),
+          );
+        } else {
+          return _buildLogin(context, viewModel);
+        }
+      },
+    );
+  }
+
+  _buildLogin(BuildContext context, LoginViewModel viewModel) {
     final Size size = MediaQuery.of(context).size;
     final bool isKeyboardOpen = (MediaQuery.of(context).viewInsets.bottom > 0);
     return Container(
       height: size.height,
       width: size.width,
-      padding: const EdgeInsets.all(DEFAULT_PAGE_PADDING),
+      padding: const EdgeInsets.all(defaultPagePadding),
       child: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -115,7 +114,7 @@ class _LoginPageState extends State<LoginPage> {
             const Padding(
               padding: EdgeInsets.only(top: 14),
             ),
-            _buildLoginButton(),
+            _buildLoginButton(viewModel),
             const Padding(
               padding: EdgeInsets.only(top: 14),
             ),
@@ -157,18 +156,18 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  _buildLoginButton() {
+  _buildLoginButton(LoginViewModel viewModel) {
     return ButtonWidget(
       text: "LOGIN",
       onClicked: () {
-        _viewModel.login(_getLoginParam());
+        viewModel.login(_getLoginParam());
       },
     );
   }
 
   _buildUsernameField(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
-    return Container(
+    return SizedBox(
       width: size.width,
       height: 50,
       child: TextFormField(
@@ -210,54 +209,57 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   _buildPasswordField(BuildContext context) {
-    final Size size = MediaQuery.of(context).size;
-    return Container(
-      width: size.width,
-      height: 50,
-      child: TextFormField(
-        focusNode: _passwordNode,
-        controller: _passwordEditingController,
-        obscureText: _obscureText,
-        keyboardType: TextInputType.visiblePassword,
-        decoration: InputDecoration(
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(4.0),
-            borderSide: const BorderSide(
-              color: CustomColor.textFieldBackground,
+    Size size = MediaQuery.of(context).size;
+    return ChangeNotifierProvider(
+      create: (context) => ObscureState(),
+      child: Consumer<ObscureState>(
+        builder: (context, state, child) => SizedBox(
+          width: size.width,
+          height: 50,
+          child: TextFormField(
+            focusNode: _passwordNode,
+            controller: _passwordEditingController,
+            obscureText: state.isTrue,
+            keyboardType: TextInputType.visiblePassword,
+            decoration: InputDecoration(
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(4.0),
+                borderSide: const BorderSide(
+                  color: CustomColor.textFieldBackground,
+                ),
+              ),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(4.0),
+                borderSide: const BorderSide(
+                  color: CustomColor.textFieldBackground,
+                ),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(4.0),
+                borderSide: const BorderSide(
+                  color: CustomColor.textFieldBackground,
+                ),
+              ),
+              focusColor: CustomColor.hintColor,
+              hoverColor: CustomColor.textFieldBackground,
+              fillColor: CustomColor.textFieldBackground,
+              filled: true,
+              labelText: "Password*",
+              labelStyle: CustomTheme.mainTheme.textTheme.bodyText2,
+              suffixIcon: IconButton(
+                icon: state.switchObsIcon,
+                color: CustomColor.hintColor,
+                onPressed: () {
+                  state.toggleObs();
+                },
+              ),
             ),
-          ),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(4.0),
-            borderSide: const BorderSide(
-              color: CustomColor.textFieldBackground,
-            ),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(4.0),
-            borderSide: const BorderSide(
-              color: CustomColor.textFieldBackground,
-            ),
-          ),
-          focusColor: CustomColor.hintColor,
-          hoverColor: CustomColor.textFieldBackground,
-          fillColor: CustomColor.textFieldBackground,
-          filled: true,
-          labelText: "Password*",
-          labelStyle: CustomTheme.mainTheme.textTheme.bodyText2,
-          suffixIcon: IconButton(
-            icon: const Icon(Icons.remove_red_eye),
-            color: CustomColor.hintColor,
-            onPressed: () {
-              setState(() {
-                _obscureText = !_obscureText;
-              });
+            cursorColor: CustomColor.hintColor,
+            onFieldSubmitted: (term) {
+              fieldFocusChange(context, _passwordNode, _viewNode);
             },
           ),
         ),
-        cursorColor: CustomColor.hintColor,
-        onFieldSubmitted: (term) {
-          fieldFocusChange(context, _passwordNode, _viewNode);
-        },
       ),
     );
   }
@@ -269,4 +271,14 @@ class _LoginPageState extends State<LoginPage> {
       system: _config.system,
     );
   }
+
+  fieldFocusChange(
+    BuildContext context,
+    FocusNode currentFocus,
+    FocusNode nextFocus,
+  ) {
+    currentFocus.unfocus();
+    FocusScope.of(context).requestFocus(nextFocus);
+  }
+
 }

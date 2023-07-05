@@ -126,13 +126,13 @@ class _UserEditPageState extends State<UserEditPage> {
 
   _buildBody(BuildContext context) {
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(DEFAULT_PAGE_PADDING),
+      padding: const EdgeInsets.all(defaultPagePadding),
       child: Container(
         child: Column(
           children: <Widget>[
             _buildForm(context),
             const Padding(
-              padding: EdgeInsets.only(top: DEFAULT_PAGE_PADDING),
+              padding: EdgeInsets.only(top: defaultPagePadding),
             ),
             _buildUpdateButton(context),
           ],
