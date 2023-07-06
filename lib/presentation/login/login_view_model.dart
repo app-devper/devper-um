@@ -1,18 +1,30 @@
 import 'dart:async';
 
+import 'package:common/app_config.dart';
 import 'package:common/core/error/failures.dart';
+import 'package:flutter/material.dart';
 import 'package:um/domain/model/auth/login.dart';
 import 'package:um/domain/model/auth/param.dart';
 import 'package:um/domain/usecases/auth/fetch_token.dart';
 import 'package:um/domain/usecases/auth/login_user.dart';
 import 'package:um/core/view_model.dart';
-import 'package:um/presentation/login/login_state.dart';
+
+import 'login_state.dart';
 
 class LoginViewModel with ViewModel {
+  final TextEditingController usernameEditingController = TextEditingController();
+  final TextEditingController passwordEditingController = TextEditingController();
+
+  final FocusNode usernameNode = FocusNode();
+  final FocusNode passwordNode = FocusNode();
+  final FocusNode viewNode = FocusNode();
+
   final LoginUser loginUserUseCase;
   final FetchToken fetchTokenUseCase;
+  final AppConfig config;
 
   LoginViewModel({
+    required this.config,
     required this.loginUserUseCase,
     required this.fetchTokenUseCase,
   });
@@ -25,14 +37,14 @@ class LoginViewModel with ViewModel {
 
   Stream<bool> get initLoading => _init.stream;
 
-  void login(LoginParam param) {
+  void login() {
     _onLoading();
-    loginUserUseCase(param).then((value) => {value.fold(onSuccess: _onLogged, onError: _onError)});
+    loginUserUseCase(_getLoginParam()).then((value) => value.fold(onSuccess: _onLogged, onError: _onError));
   }
 
   void fetchToken() {
     _onInit();
-    fetchTokenUseCase().then((value) => {value.fold(onSuccess: _onLogged, onError: _onNotLogged)});
+    fetchTokenUseCase().then((value) => value.fold(onSuccess: _onLogged, onError: _onNotLogged));
   }
 
   _onInit() {
@@ -51,7 +63,7 @@ class LoginViewModel with ViewModel {
 
   _onError(Failure failure) {
     if (!_states.isClosed) {
-      _states.sink.add(ErrorState(message: failure.error));
+      _states.sink.add(ErrorState(message: failure.getMessage()));
     }
   }
 
@@ -61,9 +73,24 @@ class LoginViewModel with ViewModel {
     }
   }
 
+  _getLoginParam() {
+    return LoginParam(
+      username: usernameEditingController.text,
+      password: passwordEditingController.text,
+      system: config.system,
+    );
+  }
+
   @override
   dispose() {
     _init.close();
     _states.close();
+
+    usernameNode.dispose();
+    passwordNode.dispose();
+    viewNode.dispose();
+
+    usernameEditingController.dispose();
+    passwordEditingController.dispose();
   }
 }

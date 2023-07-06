@@ -1,23 +1,20 @@
 import 'package:common/core/error/failures.dart';
+import 'package:common/core/result/result.dart';
 import 'package:common/core/usecase/usecase.dart';
-import 'package:dartz/dartz.dart';
-import 'package:um/domain/model/auth/param.dart';
 import 'package:um/domain/repositories/login_repository.dart';
 
-class LogoutUser implements UseCase<LogOutParams, bool> {
+class LogoutUser implements BaseUseCase<bool> {
   final LoginRepository repository;
 
   LogoutUser({required this.repository});
 
   @override
-  Future<Either<Failure, bool>> call(LogOutParams params) async {
+  FutureResult<bool, Failure> call() async {
     try {
       final result = await repository.logoutUser();
-      return Right(result);
+      return Result.success(result);
     } on Exception catch (e) {
-      return Left(Failure(e));
+      return Result.error(Failure(e));
     }
   }
 }
-
-

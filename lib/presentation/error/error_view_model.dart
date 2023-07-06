@@ -1,21 +1,23 @@
 import 'dart:async';
 import 'package:common/core/error/failures.dart';
+import 'package:um/core/view_model.dart';
 import 'package:um/domain/usecases/auth/logout_user.dart';
 
-import 'user_home_state.dart';
+import 'error_state.dart';
 
-class UserHomeViewModel {
+class ErrorViewModel with ViewModel {
   final LogoutUser logoutUseCase;
 
-  UserHomeViewModel({
+  ErrorViewModel({
     required this.logoutUseCase,
   });
 
-  final _states = StreamController<UserHomeState>();
+  final _states = StreamController<ErrorState>();
 
-  Stream<UserHomeState> get states => _states.stream;
+  Stream<ErrorState> get states => _states.stream;
 
   void logout() {
+    _onLoading();
     logoutUseCase().then((value) => value.fold(onSuccess: _onLogout, onError: _onError));
   }
 
@@ -31,6 +33,7 @@ class UserHomeViewModel {
     _states.sink.add((LogoutState()));
   }
 
+  @override
   dispose() {
     _states.close();
   }

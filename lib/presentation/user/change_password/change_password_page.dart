@@ -22,12 +22,12 @@ class ChangePasswordPage extends StatefulWidget {
 
 class _ChangePasswordPageState extends State<ChangePasswordPage> {
   final TextEditingController _oldPasswordController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _passwordConfirmController = TextEditingController();
+  final TextEditingController _newPasswordController = TextEditingController();
+  final TextEditingController _confirmPasswordController = TextEditingController();
 
   final FocusNode _oldPasswordNode = FocusNode();
-  final FocusNode _passwordNode = FocusNode();
-  final FocusNode _passwordConfirmNode = FocusNode();
+  final FocusNode _newPasswordNode = FocusNode();
+  final FocusNode _confirmPasswordNode = FocusNode();
   final FocusNode _viewNode = FocusNode();
 
   final _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -39,7 +39,6 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
   @override
   void initState() {
     super.initState();
-
     _viewModel = sl<ChangePasswordViewModel>();
     _viewModel.states.stream.listen((state) {
       if (state is LoadingState) {
@@ -66,13 +65,13 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
   @override
   void dispose() {
     _oldPasswordNode.dispose();
-    _passwordNode.dispose();
-    _passwordConfirmNode.dispose();
+    _newPasswordNode.dispose();
+    _confirmPasswordNode.dispose();
     _viewNode.dispose();
 
     _oldPasswordController.dispose();
-    _passwordController.dispose();
-    _passwordConfirmController.dispose();
+    _newPasswordController.dispose();
+    _confirmPasswordController.dispose();
 
     _viewModel.dispose();
     super.dispose();
@@ -90,7 +89,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
           backgroundColor: CustomColor.white,
           centerTitle: true,
           title: Text(
-            "ChangePassword",
+            "Change Password",
             style: CustomTheme.mainTheme.textTheme.headline5,
           ),
         ),
@@ -123,25 +122,25 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
               _oldPasswordNode,
               _oldPasswordController,
               "Old Password*",
-              _passwordNode,
+              _newPasswordNode,
             ),
             const Padding(
               padding: EdgeInsets.only(top: 12),
             ),
             _buildPasswordField(
               context,
-              _passwordNode,
-              _passwordController,
+              _newPasswordNode,
+              _newPasswordController,
               "New Password*",
-              _passwordConfirmNode,
+              _confirmPasswordNode,
             ),
             const Padding(
               padding: EdgeInsets.only(top: 12),
             ),
             _buildPasswordField(
               context,
-              _passwordConfirmNode,
-              _passwordConfirmController,
+              _confirmPasswordNode,
+              _confirmPasswordController,
               "Confirm Password*",
               _viewNode,
             ),
@@ -163,11 +162,11 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
     return ButtonWidget(
       key: const Key("changePassword"),
       onClicked: () {
-        if (_oldPasswordController.text.isNotEmpty && _passwordController.text.isNotEmpty && _passwordConfirmController.text.isNotEmpty) {
-          if (_passwordController.text == _passwordConfirmController.text) {
+        if (_oldPasswordController.text.isNotEmpty && _newPasswordController.text.isNotEmpty && _confirmPasswordController.text.isNotEmpty) {
+          if (_newPasswordController.text == _confirmPasswordController.text) {
             _viewModel.changePassword(ChangePasswordParam(
               oldPassword: _oldPasswordController.text,
-              newPassword: _passwordController.text,
+              newPassword: _newPasswordController.text,
             ));
           } else {
             _snackBar.hideAll();
@@ -178,7 +177,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
           _snackBar.showErrorSnackBar("Fields can't be empty");
         }
       },
-      text: "CHANGE PASSWORD",
+      text: "Change Password",
     );
   }
 
@@ -221,7 +220,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                 ),
               ),
               focusColor: CustomColor.hintColor,
-              hoverColor: CustomColor.hintColor,
+              hoverColor: CustomColor.textFieldBackground,
               fillColor: CustomColor.textFieldBackground,
               filled: true,
               labelText: labelText,

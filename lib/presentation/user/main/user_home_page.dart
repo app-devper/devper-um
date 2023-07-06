@@ -1,4 +1,3 @@
-import 'package:common/app_config.dart';
 import 'package:common/core/widget/custom_snack_bar.dart';
 import 'package:common/theme.dart';
 import 'package:flutter/material.dart';
@@ -15,24 +14,19 @@ class UserHomePage extends StatefulWidget {
   State<StatefulWidget> createState() => _UserHomePageState();
 }
 
-class _UserHomePageState extends State<UserHomePage> with WidgetsBindingObserver {
+class _UserHomePageState extends State<UserHomePage>{
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   late CustomSnackBar _snackBar;
 
   late UserHomeViewModel _viewModel;
-  late AppConfig _config;
-
-  bool isAdmin = false;
 
   final FocusNode _viewNode = FocusNode();
 
   @override
   void initState() {
-    WidgetsBinding.instance.addObserver(this);
     super.initState();
     _viewModel = sl<UserHomeViewModel>();
-    _config = sl<AppConfig>();
     _viewModel.states.listen((state) {
       if (state is ErrorState) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -44,32 +38,17 @@ class _UserHomePageState extends State<UserHomePage> with WidgetsBindingObserver
           _snackBar.hideAll();
           _snackBar.showLoadingSnackBar();
         });
-      }  else if (state is LoggedState) {
-        setState(() {
-          isAdmin = state.isAdmin;
-        });
       } else if (state is LogoutState) {
         Navigator.popAndPushNamed(context, routeLogin);
       }
-    });
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _viewModel.prepareData();
     });
   }
 
   @override
   void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
     _viewNode.dispose();
     _viewModel.dispose();
     super.dispose();
-  }
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed) {
-      _viewModel.prepareData();
-    }
   }
 
   @override

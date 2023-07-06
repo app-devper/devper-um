@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:um/presentation/error/error_page.dart';
+import 'package:um/presentation/not_found/not_found_page.dart';
 import 'package:um/presentation/landing/landing_page.dart';
 
 import 'package:um/presentation/constants.dart';
@@ -16,7 +17,9 @@ class RouterUm {
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case routeLogin:
-        return MaterialPageRoute(builder: (_) =>  LoginPage());
+        return MaterialPageRoute(builder: (_) => const LoginPage());
+      case routeLanding:
+        return MaterialPageRoute(builder: (_) => const LandingPage());
       case routeChangePassword:
         return MaterialPageRoute(builder: (_) => const ChangePasswordPage());
       case routeUsers:
@@ -30,10 +33,11 @@ class RouterUm {
         return MaterialPageRoute(builder: (_) => UserEditPage(userId: args.userId));
       case routeUserHome:
         return MaterialPageRoute(builder: (_) => const UserHomePage());
-      case routeLanding:
-        return MaterialPageRoute(builder: (_) => LandingPage());
-      default:
+
+      case routeError:
         return MaterialPageRoute(builder: (_) => const ErrorPage());
+      default:
+        return MaterialPageRoute(builder: (_) => const NotFoundPage());
     }
   }
 }

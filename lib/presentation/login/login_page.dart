@@ -1,31 +1,19 @@
-import 'package:common/app_config.dart';
 import 'package:common/core/widget/button_widget.dart';
 import 'package:common/core/widget/dialog_widget.dart';
 import 'package:common/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:um/domain/model/auth/param.dart';
 import 'package:um/container.dart';
 import 'package:um/presentation/constants.dart';
 import 'package:um/core/obscure_state.dart';
 import 'package:um/core/stacked_view.dart';
 
-import 'package:um/presentation/login/login_state.dart';
-import 'package:um/presentation/login/login_view_model.dart';
+import 'login_state.dart';
+import 'login_view_model.dart';
 
 class LoginPage extends StackedView<LoginViewModel> {
-  final TextEditingController _usernameEditingController = TextEditingController();
-  final TextEditingController _passwordEditingController = TextEditingController();
-
-  final FocusNode _usernameNode = FocusNode();
-  final FocusNode _passwordNode = FocusNode();
-  final FocusNode _viewNode = FocusNode();
-
-  final _scaffoldKey = GlobalKey<ScaffoldState>();
-  final _config = sl<AppConfig>();
-
-  LoginPage({super.key});
+  const LoginPage({super.key});
 
   @override
   void onViewModelReady(LoginViewModel viewModel) {
@@ -50,21 +38,13 @@ class LoginPage extends StackedView<LoginViewModel> {
   }
 
   @override
-  onDispose() {
-    _usernameNode.dispose();
-    _passwordNode.dispose();
-    _viewNode.dispose();
-
-    _usernameEditingController.dispose();
-    _passwordEditingController.dispose();
-  }
+  onDispose() {}
 
   @override
   Widget builder(BuildContext context, LoginViewModel viewModel) {
     return GestureDetector(
-      onTap: () => FocusScope.of(context).requestFocus(_viewNode),
+      onTap: () => FocusScope.of(context).requestFocus(viewModel.viewNode),
       child: Scaffold(
-        key: _scaffoldKey,
         body: AnnotatedRegion<SystemUiOverlayStyle>(
           value: SystemUiOverlayStyle.dark.copyWith(
             statusBarColor: CustomColor.statusBarColor,
@@ -105,12 +85,12 @@ class LoginPage extends StackedView<LoginViewModel> {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
-            _buildHeader(isKeyboardOpen),
-            _buildUsernameField(context),
+            _buildHeader(isKeyboardOpen, viewModel),
+            _buildUsernameField(context, viewModel),
             const Padding(
               padding: EdgeInsets.only(top: 12),
             ),
-            _buildPasswordField(context),
+            _buildPasswordField(context, viewModel),
             const Padding(
               padding: EdgeInsets.only(top: 14),
             ),
@@ -124,7 +104,7 @@ class LoginPage extends StackedView<LoginViewModel> {
     );
   }
 
-  _buildHeader(bool isKeyboardOpen) {
+  _buildHeader(bool isKeyboardOpen, LoginViewModel viewModel) {
     if (!isKeyboardOpen) {
       return Column(
         children: <Widget>[
@@ -135,7 +115,7 @@ class LoginPage extends StackedView<LoginViewModel> {
             width: 120,
             height: 120,
             child: Image(
-              image: AssetImage(_config.logo),
+              image: AssetImage(viewModel.config.logo),
             ),
           ),
           const Padding(
@@ -160,19 +140,19 @@ class LoginPage extends StackedView<LoginViewModel> {
     return ButtonWidget(
       text: "LOGIN",
       onClicked: () {
-        viewModel.login(_getLoginParam());
+        viewModel.login();
       },
     );
   }
 
-  _buildUsernameField(BuildContext context) {
+  _buildUsernameField(BuildContext context, LoginViewModel viewModel) {
     final Size size = MediaQuery.of(context).size;
     return SizedBox(
       width: size.width,
       height: 50,
       child: TextFormField(
-        focusNode: _usernameNode,
-        controller: _usernameEditingController,
+        focusNode: viewModel.usernameNode,
+        controller: viewModel.usernameEditingController,
         keyboardType: TextInputType.emailAddress,
         decoration: InputDecoration(
           focusedBorder: OutlineInputBorder(
@@ -202,13 +182,13 @@ class LoginPage extends StackedView<LoginViewModel> {
         ),
         cursorColor: CustomColor.hintColor,
         onFieldSubmitted: (term) {
-          fieldFocusChange(context, _usernameNode, _passwordNode);
+          fieldFocusChange(context, viewModel.usernameNode, viewModel.passwordNode);
         },
       ),
     );
   }
 
-  _buildPasswordField(BuildContext context) {
+  _buildPasswordField(BuildContext context, LoginViewModel viewModel) {
     Size size = MediaQuery.of(context).size;
     return ChangeNotifierProvider(
       create: (context) => ObscureState(),
@@ -217,8 +197,8 @@ class LoginPage extends StackedView<LoginViewModel> {
           width: size.width,
           height: 50,
           child: TextFormField(
-            focusNode: _passwordNode,
-            controller: _passwordEditingController,
+            focusNode: viewModel.passwordNode,
+            controller: viewModel.passwordEditingController,
             obscureText: state.isTrue,
             keyboardType: TextInputType.visiblePassword,
             decoration: InputDecoration(
@@ -256,19 +236,11 @@ class LoginPage extends StackedView<LoginViewModel> {
             ),
             cursorColor: CustomColor.hintColor,
             onFieldSubmitted: (term) {
-              fieldFocusChange(context, _passwordNode, _viewNode);
+              fieldFocusChange(context, viewModel.passwordNode, viewModel.viewNode);
             },
           ),
         ),
       ),
-    );
-  }
-
-  _getLoginParam() {
-    return LoginParam(
-      username: _usernameEditingController.text,
-      password: _passwordEditingController.text,
-      system: _config.system,
     );
   }
 
@@ -280,5 +252,4 @@ class LoginPage extends StackedView<LoginViewModel> {
     currentFocus.unfocus();
     FocusScope.of(context).requestFocus(nextFocus);
   }
-
 }

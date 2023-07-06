@@ -10,10 +10,5 @@ class LoginParam {
   });
 }
 
-class SystemParam {}
-
-class LogOutParams {}
-
 class GetLoginParam {}
 
-class TokenParams {}

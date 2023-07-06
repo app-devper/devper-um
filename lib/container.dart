@@ -30,6 +30,7 @@ import 'package:um/domain/usecases/user/get_users.dart';
 import 'package:um/domain/usecases/user/remove_user_by_id.dart';
 import 'package:um/domain/usecases/user/update_user_by_id.dart';
 import 'package:um/domain/usecases/user/update_user_info.dart';
+import 'package:um/presentation/error/error_view_model.dart';
 import 'package:um/presentation/landing/landing_view_model.dart';
 import 'package:um/presentation/login/login_view_model.dart';
 import 'package:um/presentation/user/add/user_add_view_model.dart';
@@ -81,19 +82,20 @@ Future<void> initUm() async {
   // ViewModel
   sl.registerFactory(
     () => LoginViewModel(
+      config: sl(),
       loginUserUseCase: sl(),
       fetchTokenUseCase: sl(),
     ),
   );
   sl.registerFactory(
     () => LandingViewModel(
+      config: sl(),
       getSystemUseCase: sl(),
     ),
   );
   sl.registerFactory(
     () => UserHomeViewModel(
-      getLoginUseCase: sl(),
-      logOutUseCase: sl(),
+      logoutUseCase: sl(),
     ),
   );
   sl.registerFactory(
@@ -122,6 +124,11 @@ Future<void> initUm() async {
       removeUserByIdUseCase: sl(),
       updateUserByIdUseCase: sl(),
       getUserByIdUseCase: sl(),
+    ),
+  );
+  sl.registerFactory(
+    () => ErrorViewModel(
+      logoutUseCase: sl(),
     ),
   );
 

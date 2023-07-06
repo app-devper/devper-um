@@ -1,16 +1,15 @@
-import 'package:common/app_config.dart';
 import 'package:flutter/material.dart';
 import 'package:common/theme.dart';
 import 'package:um/container.dart';
 import 'package:um/core/stacked_view.dart';
 import 'package:um/presentation/constants.dart';
-import 'package:um/presentation/landing/landing_state.dart';
-import 'package:um/presentation/landing/landing_view_model.dart';
+
+import 'landing_state.dart';
+import 'landing_view_model.dart';
 
 class LandingPage extends StackedView<LandingViewModel> {
-  final _config = sl<AppConfig>();
 
-  LandingPage({super.key});
+  const LandingPage({super.key});
 
   @override
   Widget builder(BuildContext context, LandingViewModel viewModel) {
@@ -32,8 +31,8 @@ class LandingPage extends StackedView<LandingViewModel> {
     final viewModel = sl<LandingViewModel>();
     viewModel.states.listen((state) {
       if (state is SystemState) {
-        if (state.data.systemCode == _config.system) {
-          Navigator.pushNamedAndRemoveUntil(context, _config.home, (r) => false);
+        if (state.data.systemCode == viewModel.config.system) {
+          Navigator.pushNamedAndRemoveUntil(context, viewModel.config.home, (r) => false);
         } else {
           Navigator.pushNamedAndRemoveUntil(context, routeError, (r) => false);
         }
@@ -58,5 +57,4 @@ class LandingPage extends StackedView<LandingViewModel> {
       ],
     );
   }
-
 }
