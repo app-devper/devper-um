@@ -5,13 +5,13 @@ import 'package:common/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:um/core/obscure_state.dart';
+import 'package:um/core/widget/obscure_state.dart';
 import 'package:um/domain/model/user/param.dart';
 import 'package:um/container.dart';
 import 'package:um/presentation/constants.dart';
 
-import 'package:um/presentation/user/change_password/change_password_state.dart';
-import 'package:um/presentation/user/change_password/change_password_view_model.dart';
+import 'change_password_state.dart';
+import 'change_password_view_model.dart';
 
 class ChangePasswordPage extends StatefulWidget {
   const ChangePasswordPage({super.key});
@@ -21,14 +21,14 @@ class ChangePasswordPage extends StatefulWidget {
 }
 
 class _ChangePasswordPageState extends State<ChangePasswordPage> {
-  final TextEditingController _oldPasswordController = TextEditingController();
-  final TextEditingController _newPasswordController = TextEditingController();
-  final TextEditingController _confirmPasswordController = TextEditingController();
+  final oldPasswordController = TextEditingController();
+  final newPasswordController = TextEditingController();
+  final confirmPasswordController = TextEditingController();
 
-  final FocusNode _oldPasswordNode = FocusNode();
-  final FocusNode _newPasswordNode = FocusNode();
-  final FocusNode _confirmPasswordNode = FocusNode();
-  final FocusNode _viewNode = FocusNode();
+  final oldPasswordNode = FocusNode();
+  final newPasswordNode = FocusNode();
+  final confirmPasswordNode = FocusNode();
+  final viewNode = FocusNode();
 
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -40,7 +40,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
   void initState() {
     super.initState();
     _viewModel = sl<ChangePasswordViewModel>();
-    _viewModel.states.stream.listen((state) {
+    _viewModel.states.listen((state) {
       if (state is LoadingState) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           _snackBar.hideAll();
@@ -64,14 +64,14 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
 
   @override
   void dispose() {
-    _oldPasswordNode.dispose();
-    _newPasswordNode.dispose();
-    _confirmPasswordNode.dispose();
-    _viewNode.dispose();
+    oldPasswordNode.dispose();
+    newPasswordNode.dispose();
+    confirmPasswordNode.dispose();
+    viewNode.dispose();
 
-    _oldPasswordController.dispose();
-    _newPasswordController.dispose();
-    _confirmPasswordController.dispose();
+    oldPasswordController.dispose();
+    newPasswordController.dispose();
+    confirmPasswordController.dispose();
 
     _viewModel.dispose();
     super.dispose();
@@ -81,7 +81,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
   Widget build(BuildContext context) {
     _snackBar = CustomSnackBar(key: const Key("snackbar"), context: context);
     return GestureDetector(
-      onTap: () => FocusScope.of(context).requestFocus(_viewNode),
+      onTap: () => FocusScope.of(context).requestFocus(viewNode),
       child: Scaffold(
         key: _scaffoldKey,
         appBar: AppBar(
@@ -119,30 +119,30 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
             ),
             _buildPasswordField(
               context,
-              _oldPasswordNode,
-              _oldPasswordController,
+              oldPasswordNode,
+              oldPasswordController,
               "Old Password*",
-              _newPasswordNode,
+              newPasswordNode,
             ),
             const Padding(
               padding: EdgeInsets.only(top: 12),
             ),
             _buildPasswordField(
               context,
-              _newPasswordNode,
-              _newPasswordController,
+              newPasswordNode,
+              newPasswordController,
               "New Password*",
-              _confirmPasswordNode,
+              confirmPasswordNode,
             ),
             const Padding(
               padding: EdgeInsets.only(top: 12),
             ),
             _buildPasswordField(
               context,
-              _confirmPasswordNode,
-              _confirmPasswordController,
+              confirmPasswordNode,
+              confirmPasswordController,
               "Confirm Password*",
-              _viewNode,
+              viewNode,
             ),
             const Padding(
               padding: EdgeInsets.only(top: 14),
@@ -162,11 +162,11 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
     return ButtonWidget(
       key: const Key("changePassword"),
       onClicked: () {
-        if (_oldPasswordController.text.isNotEmpty && _newPasswordController.text.isNotEmpty && _confirmPasswordController.text.isNotEmpty) {
-          if (_newPasswordController.text == _confirmPasswordController.text) {
+        if (oldPasswordController.text.isNotEmpty && newPasswordController.text.isNotEmpty && confirmPasswordController.text.isNotEmpty) {
+          if (newPasswordController.text == confirmPasswordController.text) {
             _viewModel.changePassword(ChangePasswordParam(
-              oldPassword: _oldPasswordController.text,
-              newPassword: _newPasswordController.text,
+              oldPassword: oldPasswordController.text,
+              newPassword: newPasswordController.text,
             ));
           } else {
             _snackBar.hideAll();

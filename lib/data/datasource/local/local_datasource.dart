@@ -2,20 +2,21 @@ import 'package:common/data/local/local_datasource.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LocalDataSourceImpl extends LocalDataSource {
-  final SharedPreferences sharedPreferences;
+  final String _cachedToken = 'CACHED_TOKEN';
+  final SharedPreferences _sharedPreferences;
 
   LocalDataSourceImpl({
-    required this.sharedPreferences,
-  });
+    required SharedPreferences sharedPreferences,
+  }) : _sharedPreferences = sharedPreferences;
 
   @override
   Future<void> cacheToken(String accessToken) {
-    return sharedPreferences.setString(CACHED_TOKEN, accessToken);
+    return _sharedPreferences.setString(_cachedToken, accessToken);
   }
 
   @override
   Future<String> getLastToken() {
-    String? jsonStr = sharedPreferences.getString(CACHED_TOKEN);
+    String? jsonStr = _sharedPreferences.getString(_cachedToken);
     if (jsonStr == null) {
       return Future.value("");
     } else {
@@ -25,9 +26,7 @@ class LocalDataSourceImpl extends LocalDataSource {
 
   @override
   Future<bool> clearToken() async {
-    bool removed = await sharedPreferences.remove(CACHED_TOKEN);
+    bool removed = await _sharedPreferences.remove(_cachedToken);
     return removed;
   }
 }
-
-const String CACHED_TOKEN = 'CACHED_TOKEN';

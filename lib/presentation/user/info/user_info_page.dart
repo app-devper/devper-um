@@ -3,12 +3,14 @@ import 'package:common/core/widget/button_widget.dart';
 import 'package:common/core/widget/custom_snack_bar.dart';
 import 'package:common/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:um/core/ext/extensions.dart';
 import 'package:um/domain/model/user/param.dart';
 import 'package:um/domain/model/user/user.dart';
 import 'package:um/container.dart';
 import 'package:um/presentation/constants.dart';
-import 'package:um/presentation/user/info/user_info_state.dart';
-import 'package:um/presentation/user/info/user_info_view_model.dart';
+
+import 'user_info_state.dart';
+import 'user_info_view_model.dart';
 
 class UserInfoPage extends StatefulWidget {
   const UserInfoPage({super.key});
@@ -20,18 +22,18 @@ class UserInfoPage extends StatefulWidget {
 class _UserInfoPageState extends State<UserInfoPage> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  final TextEditingController _usernameEditingController = TextEditingController();
-  final TextEditingController _firstNameEditingController = TextEditingController();
-  final TextEditingController _lastNameEditingController = TextEditingController();
-  final TextEditingController _emailEditingController = TextEditingController();
-  final TextEditingController _phoneEditingController = TextEditingController();
+  final usernameEditingController = TextEditingController();
+  final firstNameEditingController = TextEditingController();
+  final lastNameEditingController = TextEditingController();
+  final emailEditingController = TextEditingController();
+  final phoneEditingController = TextEditingController();
 
-  final FocusNode _viewNode = FocusNode();
-  final FocusNode _usernameNode = FocusNode();
-  final FocusNode _firstNameNode = FocusNode();
-  final FocusNode _lastNameNode = FocusNode();
-  final FocusNode _emailNode = FocusNode();
-  final FocusNode _phoneNode = FocusNode();
+  final viewNode = FocusNode();
+  final usernameNode = FocusNode();
+  final firstNameNode = FocusNode();
+  final lastNameNode = FocusNode();
+  final emailNode = FocusNode();
+  final phoneNode = FocusNode();
 
   late CustomSnackBar _snackBar;
 
@@ -41,7 +43,7 @@ class _UserInfoPageState extends State<UserInfoPage> {
   void initState() {
     super.initState();
     _viewModel = sl<UserInfoViewModel>();
-    _viewModel.states.stream.listen((state) {
+    _viewModel.states.listen((state) {
       if (state is ErrorState) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           _snackBar.hideAll();
@@ -57,7 +59,7 @@ class _UserInfoPageState extends State<UserInfoPage> {
         hideLoadingDialog(context);
         WidgetsBinding.instance.addPostFrameCallback((_) {
           _snackBar.hideAll();
-          _snackBar.showSnackBar(text: "Update " + state.data.username + " success");
+          _snackBar.showSnackBar(text: "Update ${state.data.username} success");
         });
       } else if (state is GetUserState) {
         _setupUser(state.data);
@@ -71,18 +73,18 @@ class _UserInfoPageState extends State<UserInfoPage> {
 
   @override
   void dispose() {
-    _usernameNode.dispose();
-    _firstNameNode.dispose();
-    _lastNameNode.dispose();
-    _phoneNode.dispose();
-    _emailNode.dispose();
+    usernameNode.dispose();
+    firstNameNode.dispose();
+    lastNameNode.dispose();
+    phoneNode.dispose();
+    emailNode.dispose();
     _viewModel.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    _snackBar = CustomSnackBar(key: Key("snackbar"), context: context);
+    _snackBar = CustomSnackBar(key: const Key("snackbar"), context: context);
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
@@ -98,27 +100,25 @@ class _UserInfoPageState extends State<UserInfoPage> {
     );
   }
 
-  void _setupUser(User user) {
-    _usernameEditingController.text = user.username;
-    _firstNameEditingController.text = user.firstName ?? "";
-    _lastNameEditingController.text = user.lastName ?? "";
-    _phoneEditingController.text = user.phone ?? "";
-    _emailEditingController.text = user.email ?? "";
+  _setupUser(User user) {
+    usernameEditingController.text = user.username;
+    firstNameEditingController.text = user.firstName ?? "";
+    lastNameEditingController.text = user.lastName ?? "";
+    phoneEditingController.text = user.phone ?? "";
+    emailEditingController.text = user.email ?? "";
   }
 
   _buildBody(BuildContext context) {
     return SingleChildScrollView(
-      padding: EdgeInsets.all(defaultPagePadding),
-      child: Container(
-        child: Column(
-          children: <Widget>[
-            _buildForm(context),
-            Padding(
-              padding: EdgeInsets.only(top: defaultPagePadding),
-            ),
-            _buildUpdateButton(context),
-          ],
-        ),
+      padding: const EdgeInsets.all(defaultPagePadding),
+      child: Column(
+        children: <Widget>[
+          _buildForm(context),
+          const Padding(
+            padding: EdgeInsets.only(top: defaultPagePadding),
+          ),
+          _buildUpdateButton(context),
+        ],
       ),
     );
   }
@@ -126,60 +126,65 @@ class _UserInfoPageState extends State<UserInfoPage> {
   _buildForm(BuildContext context) {
     return Column(
       children: <Widget>[
-        Padding(
+        const Padding(
           padding: EdgeInsets.only(top: 12),
         ),
-        _buildUsernameField(
+        _buildTextFormField(
           context,
-          _usernameNode,
-          _usernameEditingController,
+          false,
+          usernameNode,
+          usernameEditingController,
           "Username",
           TextInputType.text,
-          _firstNameNode,
+          firstNameNode,
         ),
-        Padding(
+        const Padding(
           padding: EdgeInsets.only(top: 12),
         ),
         _buildTextFormField(
           context,
-          _firstNameNode,
-          _firstNameEditingController,
+          true,
+          firstNameNode,
+          firstNameEditingController,
           "FirstName*",
           TextInputType.text,
-          _lastNameNode,
+          lastNameNode,
         ),
-        Padding(
+        const Padding(
           padding: EdgeInsets.only(top: 12),
         ),
         _buildTextFormField(
           context,
-          _lastNameNode,
-          _lastNameEditingController,
+          true,
+          lastNameNode,
+          lastNameEditingController,
           "LastName*",
           TextInputType.text,
-          _phoneNode,
+          phoneNode,
         ),
-        Padding(
+        const Padding(
           padding: EdgeInsets.only(top: 12),
         ),
         _buildTextFormField(
           context,
-          _phoneNode,
-          _phoneEditingController,
+          true,
+          phoneNode,
+          phoneEditingController,
           "Phone",
           TextInputType.phone,
-          _emailNode,
+          emailNode,
         ),
-        Padding(
+        const Padding(
           padding: EdgeInsets.only(top: 12),
         ),
         _buildTextFormField(
           context,
-          _emailNode,
-          _emailEditingController,
+          true,
+          emailNode,
+          emailEditingController,
           "Email",
           TextInputType.emailAddress,
-          _viewNode,
+          viewNode,
         ),
       ],
     );
@@ -187,6 +192,7 @@ class _UserInfoPageState extends State<UserInfoPage> {
 
   _buildTextFormField(
     BuildContext context,
+    bool enabled,
     FocusNode focusNode,
     TextEditingController controller,
     String labelText,
@@ -194,39 +200,15 @@ class _UserInfoPageState extends State<UserInfoPage> {
     FocusNode nextNode,
   ) {
     final Size size = MediaQuery.of(context).size;
-    return Container(
+    return SizedBox(
       width: size.width,
       height: 50,
       child: TextFormField(
+        enabled: enabled,
         focusNode: focusNode,
         controller: controller,
         keyboardType: textInputType,
-        decoration: InputDecoration(
-          focusedBorder: new OutlineInputBorder(
-            borderRadius: new BorderRadius.circular(4.0),
-            borderSide: new BorderSide(
-              color: CustomColor.textFieldBackground,
-            ),
-          ),
-          border: new OutlineInputBorder(
-            borderRadius: new BorderRadius.circular(4.0),
-            borderSide: new BorderSide(
-              color: CustomColor.textFieldBackground,
-            ),
-          ),
-          enabledBorder: new OutlineInputBorder(
-            borderRadius: new BorderRadius.circular(4.0),
-            borderSide: new BorderSide(
-              color: CustomColor.textFieldBackground,
-            ),
-          ),
-          focusColor: CustomColor.hintColor,
-          hoverColor: CustomColor.textFieldBackground,
-          fillColor: CustomColor.textFieldBackground,
-          filled: true,
-          labelText: labelText,
-          labelStyle: CustomTheme.mainTheme.textTheme.bodyText2,
-        ),
+        decoration: buildInputDecoration(labelText),
         cursorColor: CustomColor.hintColor,
         onFieldSubmitted: (term) {
           fieldFocusChange(context, focusNode, nextNode);
@@ -235,67 +217,14 @@ class _UserInfoPageState extends State<UserInfoPage> {
     );
   }
 
-  _buildUsernameField(
-    BuildContext context,
-    FocusNode focusNode,
-    TextEditingController controller,
-    String labelText,
-    TextInputType textInputType,
-    FocusNode nextNode,
-  ) {
-    final Size size = MediaQuery.of(context).size;
-    return Container(
-      width: size.width,
-      height: 50,
-      child: TextFormField(
-        enabled: false,
-        focusNode: focusNode,
-        controller: controller,
-        keyboardType: textInputType,
-        decoration: InputDecoration(
-          focusedBorder: new OutlineInputBorder(
-            borderRadius: new BorderRadius.circular(4.0),
-            borderSide: new BorderSide(
-              color: CustomColor.textFieldBackground,
-            ),
-          ),
-          border: new OutlineInputBorder(
-            borderRadius: new BorderRadius.circular(4.0),
-            borderSide: new BorderSide(
-              color: CustomColor.textFieldBackground,
-            ),
-          ),
-          enabledBorder: new OutlineInputBorder(
-            borderRadius: new BorderRadius.circular(4.0),
-            borderSide: new BorderSide(
-              color: CustomColor.textFieldBackground,
-            ),
-          ),
-          focusColor: CustomColor.hintColor,
-          hoverColor: CustomColor.textFieldBackground,
-          fillColor: CustomColor.textFieldBackground,
-          filled: true,
-          labelText: labelText,
-          labelStyle: CustomTheme.mainTheme.textTheme.bodyText2,
-        ),
-        cursorColor: CustomColor.hintColor,
-        onFieldSubmitted: (term) {
-          fieldFocusChange(context, focusNode, nextNode);
-        },
-      ),
-    );
-  }
-
-  _buildUpdateButton(
-    BuildContext context,
-  ) {
-    return Container(
+  _buildUpdateButton(BuildContext context) {
+    return SizedBox(
       width: double.infinity,
       height: 50,
       child: ButtonWidget(
-        key: Key("Update"),
+        key: const Key("update"),
         onClicked: () {
-          FocusScope.of(context).requestFocus(_viewNode);
+          FocusScope.of(context).requestFocus(viewNode);
           _viewModel.updateUserInfo(_getUserParam());
         },
         text: "Update",
@@ -305,10 +234,10 @@ class _UserInfoPageState extends State<UserInfoPage> {
 
   _getUserParam() {
     return UserParam(
-      firstName: _firstNameEditingController.text,
-      lastName: _lastNameEditingController.text,
-      phone: _phoneEditingController.text,
-      email: _emailEditingController.text,
+      firstName: firstNameEditingController.text,
+      lastName: lastNameEditingController.text,
+      phone: phoneEditingController.text,
+      email: emailEditingController.text,
     );
   }
 }

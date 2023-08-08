@@ -1,13 +1,15 @@
 import 'dart:async';
 import 'package:common/core/error/failures.dart';
+import 'package:um/core/view_model/view_model.dart';
 import 'package:um/domain/model/user/param.dart';
 import 'package:um/domain/model/user/user.dart';
 import 'package:um/domain/usecases/user/get_user_by_id.dart';
 import 'package:um/domain/usecases/user/remove_user_by_id.dart';
 import 'package:um/domain/usecases/user/update_user_by_id.dart';
-import 'package:um/presentation/user/edit/user_edit_state.dart';
 
-class UserEditViewModel {
+import 'user_edit_state.dart';
+
+class UserEditViewModel extends ViewModel {
   final GetUserById getUserByIdUseCase;
   final UpdateUserById updateUserByIdUseCase;
   final RemoveUserById removeUserByIdUseCase;
@@ -20,7 +22,7 @@ class UserEditViewModel {
 
   final _states = StreamController<UserEditState>();
 
-  StreamController<UserEditState> get states => _states;
+  Stream<UserEditState> get states => _states.stream;
 
   void getUserById(String userId) {
     _onLoading();
@@ -83,7 +85,9 @@ class UserEditViewModel {
     }
   }
 
+  @override
   dispose() {
+    super.dispose();
     _states.close();
   }
 }

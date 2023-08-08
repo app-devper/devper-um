@@ -1,16 +1,18 @@
 import 'dart:async';
 
 import 'package:common/core/error/failures.dart';
+import 'package:um/core/view_model/view_model.dart';
 import 'package:um/domain/model/user/param.dart';
 import 'package:um/domain/usecases/user/change_password.dart';
-import 'package:um/presentation/user/change_password/change_password_state.dart';
 
-class ChangePasswordViewModel {
+import 'change_password_state.dart';
+
+class ChangePasswordViewModel extends ViewModel {
   final ChangePassword changePasswordUseCase;
 
   final _states = StreamController<ChangePasswordState>();
 
-  StreamController<ChangePasswordState> get states => _states;
+  Stream<ChangePasswordState> get states => _states.stream;
 
   ChangePasswordViewModel({
     required this.changePasswordUseCase,
@@ -43,7 +45,9 @@ class ChangePasswordViewModel {
     }
   }
 
+  @override
   dispose() {
+    super.dispose();
     _states.close();
   }
 }

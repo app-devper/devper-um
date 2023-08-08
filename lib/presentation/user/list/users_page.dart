@@ -1,56 +1,21 @@
 import 'package:common/core/widget/custom_snack_bar.dart';
 import 'package:common/theme.dart';
 import 'package:flutter/material.dart';
-import 'package:um/domain/model/user/user.dart';
+import 'package:um/core/ext/extensions.dart';
 import 'package:um/container.dart';
+import 'package:um/core/view_model/stacked_view.dart';
 import 'package:um/presentation/constants.dart';
 import 'package:um/presentation/user/argument.dart';
-import 'package:um/presentation/user/list/users_state.dart';
-import 'package:um/presentation/user/list/users_view_model.dart';
 
-class UsersPage extends StatefulWidget {
+import 'users_state.dart';
+import 'users_view_model.dart';
+
+class UsersPage extends StackedView<UsersViewModel> {
   const UsersPage({super.key});
 
   @override
-  State<StatefulWidget> createState() => _UsersPageState();
-}
-
-class _UsersPageState extends State<UsersPage> {
-  final _scaffoldKey = GlobalKey<ScaffoldState>();
-
-  late CustomSnackBar _snackBar;
-  late UsersViewModel _viewModel;
-
-  @override
-  void initState() {
-    super.initState();
-    _viewModel = sl<UsersViewModel>();
-    _viewModel.states.stream.listen((state) {
-      if (state is ErrorState) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          _snackBar.hideAll();
-          _snackBar.showErrorSnackBar(state.message);
-        });
-      } else if (state is LoadingState) {
-      } else if (state is ListUserState) {
-        _viewModel.setUsers(state.data);
-      } else if (state is LoggedState) {}
-    });
-
-    _viewModel.getUsers();
-  }
-
-  @override
-  void dispose() {
-    _viewModel.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    _snackBar = CustomSnackBar(key: const Key("snackbar"), context: context);
+  Widget builder(BuildContext context, UsersViewModel viewModel) {
     return Scaffold(
-      key: _scaffoldKey,
       appBar: AppBar(
         iconTheme: CustomTheme.mainTheme.iconTheme,
         backgroundColor: CustomColor.white,
@@ -59,76 +24,87 @@ class _UsersPageState extends State<UsersPage> {
           "Users",
           style: CustomTheme.mainTheme.textTheme.headline5,
         ),
-        actions: _buildAction(context),
+        actions: _buildAction(context, viewModel),
       ),
-      body: _buildBody(context),
+      body: _buildBody(context, viewModel),
     );
   }
 
-  List<Widget> _buildAction(BuildContext context) {
+  @override
+  onDispose() {}
+
+  @override
+  onViewModelReady(UsersViewModel viewModel) {
+    viewModel.getUsers();
+  }
+
+  @override
+  UsersViewModel viewModelBuilder(BuildContext context) {
+    final snackBar = CustomSnackBar(key: const Key("snackBar"), context: context);
+    final viewModel = sl<UsersViewModel>();
+    viewModel.states.listen((state) {
+      if (state is ErrorState) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          snackBar.hideAll();
+          snackBar.showErrorSnackBar(state.message);
+        });
+        viewModel.setUsers(List.empty());
+      } else if (state is LoadingState) {
+      } else if (state is ListUserState) {
+        viewModel.setUsers(state.data);
+      }
+    });
+    return viewModel;
+  }
+
+  _buildAction(BuildContext context, UsersViewModel viewModel) {
     return [
       IconButton(
         onPressed: () {
-          _nextToUserAdd(context);
+          _nextToUserAdd(context, viewModel);
         },
         icon: const Icon(Icons.add),
       ),
     ];
   }
 
-  Widget _buildBody(BuildContext context) {
+  _buildBody(BuildContext context, UsersViewModel viewModel) {
     return Flex(
       direction: Axis.horizontal,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        _buildUserList(),
+        _buildUserList(context, viewModel),
       ],
     );
   }
 
-  _buildUserList() {
-    return StreamBuilder(
-      stream: _viewModel.users.stream,
-      builder: (BuildContext context, AsyncSnapshot<List<User>> snapshot) {
-        if (snapshot.hasData) {
-          var data = snapshot.requireData;
-          return _buildUser(data);
-        } else {
-          return Center(
-            child: CircularProgressIndicator(
-              color: CustomColor.backgroundMain,
-            ),
-          );
-        }
-      },
-    );
-  }
-
-  _buildUser(List<User> item) {
-    return Expanded(
-      child: ListView.builder(
-        itemCount: item.length,
-        itemBuilder: (context, index) {
-          final content = item[index];
-          return ListTile(
-            title: Text(content.username),
-            subtitle: Text(content.role),
-            onTap: () {
-              _nextToUserEdit(context, content.id);
-            },
-          );
-        },
+  _buildUserList(BuildContext context, UsersViewModel viewModel) {
+    return viewModel.users.toWidgetLoading(
+      widgetBuilder: (data) => Expanded(
+        child: ListView.builder(
+          itemCount: data.length,
+          itemBuilder: (context, index) {
+            final content = data[index];
+            return ListTile(
+              title: Text(content.username),
+              subtitle: Text(content.role),
+              onTap: () {
+                _nextToUserEdit(context, content.id, viewModel);
+              },
+            );
+          },
+        ),
       ),
     );
   }
 
-  _nextToUserEdit(BuildContext context, String userId) async {
-    var result = await Navigator.pushNamed(context, routeUserEdit, arguments: UserArgument(userId));
-    _viewModel.getUsers();
+  _nextToUserEdit(BuildContext context, String userId, UsersViewModel viewModel) async {
+    final result = await Navigator.pushNamed(context, routeUserEdit, arguments: UserArgument(userId));
+    viewModel.getUsers();
   }
 
-  _nextToUserAdd(BuildContext context) async {
-    var result = await Navigator.pushNamed(context, routeUserAdd);
-    _viewModel.getUsers();
+  _nextToUserAdd(BuildContext context, UsersViewModel viewModel) async {
+    final result = await Navigator.pushNamed(context, routeUserAdd);
+    viewModel.getUsers();
   }
 }

@@ -12,21 +12,21 @@ import 'package:um/domain/model/auth/system.dart';
 import 'package:um/domain/repositories/login_repository.dart';
 
 class LoginRepositoryImpl implements LoginRepository {
-  final UmService service;
-  final LocalDataSource localDataSource;
+  final UmService _service;
+  final LocalDataSource _localDataSource;
 
   LoginRepositoryImpl({
-    required this.service,
-    required this.localDataSource,
-  });
+    required UmService service,
+    required LocalDataSource localDataSource,
+  }) : _localDataSource = localDataSource, _service = service;
 
   @override
   Future<Login> loginUser(LoginParam param) async {
     var mapper = LoginMapper();
-    final response = await service.loginUser(mapper.toLoginRequest(param));
+    final response = await _service.loginUser(mapper.toLoginRequest(param));
     if (response.isSuccessful) {
       final result = mapper.toLoginDomain(jsonDecode(response.body));
-      localDataSource.cacheToken(result.accessToken);
+      _localDataSource.cacheToken(result.accessToken);
       return result;
     } else {
       throw HttpException(response);
@@ -34,12 +34,12 @@ class LoginRepositoryImpl implements LoginRepository {
   }
 
   @override
-  Future<Login> keepAlive() async {
+  Future<Login> keepAlive(String accessToken) async {
     var mapper = LoginMapper();
-    final response = await service.keepAlive();
+    final response = await _service.keepAlive(accessToken);
     if (response.isSuccessful) {
       final result = mapper.toLoginDomain(jsonDecode(response.body));
-      await localDataSource.cacheToken(result.accessToken);
+      await _localDataSource.cacheToken(result.accessToken);
       return result;
     } else {
       throw HttpException(response);
@@ -48,14 +48,14 @@ class LoginRepositoryImpl implements LoginRepository {
 
   @override
   Future<bool> logoutUser() async {
-    await service.logoutUser();
-    await localDataSource.clearToken();
+    await _service.logoutUser();
+    await _localDataSource.clearToken();
     return true;
   }
 
   @override
   Future<String> getRole() async {
-    final accessToken = await localDataSource.getLastToken();
+    final accessToken = await _localDataSource.getLastToken();
     final parts = accessToken.split('.');
     if (parts.length != 3) {
       throw AppException('invalid token');
@@ -70,7 +70,7 @@ class LoginRepositoryImpl implements LoginRepository {
 
   @override
   Future<String> getToken() async {
-    final accessToken = await localDataSource.getLastToken();
+    final accessToken = await _localDataSource.getLastToken();
     if (accessToken.isEmpty) {
       throw AppException("Please login");
     }
@@ -80,7 +80,7 @@ class LoginRepositoryImpl implements LoginRepository {
   @override
   Future<System> getSystem() async {
     var mapper = LoginMapper();
-    final response = await service.getSystem();
+    final response = await _service.getSystem();
     if (response.isSuccessful) {
       final result = mapper.toSystemDomain(jsonDecode(response.body));
       return result;

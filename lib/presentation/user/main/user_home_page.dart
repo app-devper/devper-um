@@ -1,72 +1,31 @@
-import 'package:common/core/widget/custom_snack_bar.dart';
+import 'package:common/core/widget/dialog_widget.dart';
 import 'package:common/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:um/container.dart';
+import 'package:um/core/view_model/stacked_view.dart';
 import 'package:um/presentation/constants.dart';
-import 'package:um/presentation/user/main/user_home_state.dart';
-import 'package:um/presentation/user/main/user_home_view_model.dart';
 
-class UserHomePage extends StatefulWidget {
+import 'user_home_state.dart';
+import 'user_home_view_model.dart';
+
+class UserHomePage extends StackedView<UserHomeViewModel> {
   const UserHomePage({super.key});
 
   @override
-  State<StatefulWidget> createState() => _UserHomePageState();
-}
-
-class _UserHomePageState extends State<UserHomePage>{
-  final _scaffoldKey = GlobalKey<ScaffoldState>();
-
-  late CustomSnackBar _snackBar;
-
-  late UserHomeViewModel _viewModel;
-
-  final FocusNode _viewNode = FocusNode();
-
-  @override
-  void initState() {
-    super.initState();
-    _viewModel = sl<UserHomeViewModel>();
-    _viewModel.states.listen((state) {
-      if (state is ErrorState) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          _snackBar.hideAll();
-          _snackBar.showErrorSnackBar(state.message);
-        });
-      } else if (state is LoadingState) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          _snackBar.hideAll();
-          _snackBar.showLoadingSnackBar();
-        });
-      } else if (state is LogoutState) {
-        Navigator.popAndPushNamed(context, routeLogin);
-      }
-    });
-  }
-
-  @override
-  void dispose() {
-    _viewNode.dispose();
-    _viewModel.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    _snackBar = CustomSnackBar(key: const Key("snackbar"), context: context);
+  Widget builder(BuildContext context, UserHomeViewModel viewModel) {
     return GestureDetector(
-      onTap: () => FocusScope.of(context).requestFocus(_viewNode),
+      onTap: () => FocusScope.of(context).requestFocus(viewModel.viewNode),
       child: Scaffold(
-        key: _scaffoldKey,
         appBar: AppBar(
           iconTheme: CustomTheme.mainTheme.iconTheme,
           backgroundColor: CustomColor.white,
           centerTitle: true,
           title: Text(
-           "Home",
+            "Home",
             style: CustomTheme.mainTheme.textTheme.headline5,
           ),
-          actions: _buildAction(context),
+          actions: _buildAction(context, viewModel),
         ),
         body: AnnotatedRegion<SystemUiOverlayStyle>(
           value: SystemUiOverlayStyle.dark.copyWith(
@@ -78,11 +37,33 @@ class _UserHomePageState extends State<UserHomePage>{
     );
   }
 
-  List<Widget> _buildAction(BuildContext context) {
+  @override
+  onDispose() {}
+
+  @override
+  onViewModelReady(UserHomeViewModel viewModel) {}
+
+  @override
+  UserHomeViewModel viewModelBuilder(BuildContext context) {
+    final viewModel = sl<UserHomeViewModel>();
+    viewModel.states.listen((state) {
+      if (state is ErrorState) {
+        hideLoadingDialog(context);
+      } else if (state is LoadingState) {
+        showLoadingDialog(context);
+      } else if (state is LogoutState) {
+        hideLoadingDialog(context);
+        Navigator.popAndPushNamed(context, routeLogin);
+      }
+    });
+    return viewModel;
+  }
+
+  _buildAction(BuildContext context, UserHomeViewModel viewModel) {
     return [
       PopupMenuButton<int>(
         icon: const Icon(Icons.more_vert),
-        onSelected: (item) => handleClick(item),
+        onSelected: (item) => _handleClick(context, item, viewModel),
         itemBuilder: (context) => [
           const PopupMenuItem<int>(value: 0, child: Text("User List")),
           const PopupMenuItem<int>(value: 1, child: Text("User Info")),
@@ -93,7 +74,7 @@ class _UserHomePageState extends State<UserHomePage>{
     ];
   }
 
-  void handleClick(int item) {
+  _handleClick(BuildContext context, int item, UserHomeViewModel viewModel) {
     switch (item) {
       case 0:
         Navigator.pushNamed(context, routeUsers);
@@ -105,23 +86,20 @@ class _UserHomePageState extends State<UserHomePage>{
         Navigator.pushNamed(context, routeChangePassword);
         break;
       case 3:
-        _viewModel.logout();
+        viewModel.logout();
         break;
     }
   }
 
-  Widget _buildBody(BuildContext context) {
+  _buildBody(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
     return Container(
       height: size.height,
       width: size.width,
       padding: const EdgeInsets.all(defaultPagePadding),
       child: const Column(
-        children: <Widget>[
-
-        ],
+        children: <Widget>[],
       ),
     );
   }
-
 }

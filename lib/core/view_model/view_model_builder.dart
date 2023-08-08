@@ -1,5 +1,7 @@
 import 'package:flutter/widgets.dart';
-import 'package:um/core/view_model.dart';
+import 'package:provider/provider.dart';
+
+import 'view_model.dart';
 
 class ViewModelBuilder<T extends ViewModel> extends StatefulWidget {
   final Function(T viewModel) onViewModelReady;
@@ -39,19 +41,25 @@ class ViewModelBuilderState<T extends ViewModel> extends State<ViewModelBuilder<
   @override
   dispose() {
     super.dispose();
-    _viewModel.dispose();
     widget.onDispose.call();
   }
 
   @override
   Widget build(BuildContext context) {
-    return builder(context, _viewModel);
+    return ChangeNotifierProvider<T>(
+      create: (context) => _viewModel,
+      child: Consumer<T>(
+        builder: builder,
+      ),
+    );
   }
 
-  Widget builder(BuildContext context, T viewModel) {
+  Widget builder(BuildContext context, T viewModel,Widget? child) {
     return widget.builder(
       context,
       viewModel,
     );
   }
 }
+
+T getParentViewModel<T>(BuildContext context, {bool listen = true}) => Provider.of<T>(context, listen: listen);

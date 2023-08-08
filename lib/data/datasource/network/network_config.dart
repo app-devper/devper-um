@@ -3,18 +3,18 @@ import 'package:common/data/session/app_session_provider.dart';
 import 'package:flutter/foundation.dart';
 
 class AppNetworkConfig extends NetworkConfig {
-  final AppSessionProvider appSession;
+  final AppSessionProvider _appSession;
 
   AppNetworkConfig({
-    required this.appSession,
-  });
+    required AppSessionProvider appSession,
+  }) : _appSession = appSession;
 
   @override
   Map<String, String> getHeaders(Uri uri) {
     Map<String, String> headers = {};
     headers["Content-Type"] = "application/json; charset=utf-8";
-    if (appSession.getAccessToken().isNotEmpty) {
-      headers["Authorization"] = "Bearer ${appSession.getAccessToken()}";
+    if (_appSession.getAccessToken().isNotEmpty) {
+      headers["Authorization"] = "Bearer ${_appSession.getAccessToken()}";
     }
     return headers;
   }
@@ -26,16 +26,16 @@ class AppNetworkConfig extends NetworkConfig {
 
   @override
   String getClientId() {
-    return appSession.getClientId();
+    return _appSession.getClientId();
   }
 
   @override
   String getHostApp() {
-    return appSession.getHostApp();
+    return _appSession.getHostApp();
   }
 
   @override
   String getHostUm() {
-    return appSession.getHostUm();
+    return _appSession.getHostUm();
   }
 }

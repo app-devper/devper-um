@@ -23,18 +23,19 @@ class UserEditPage extends StatefulWidget {
 class _UserEditPageState extends State<UserEditPage> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  final TextEditingController _usernameEditingController = TextEditingController();
-  final TextEditingController _firstNameEditingController = TextEditingController();
-  final TextEditingController _lastNameEditingController = TextEditingController();
-  final TextEditingController _emailEditingController = TextEditingController();
-  final TextEditingController _phoneEditingController = TextEditingController();
+  final _usernameEditingController = TextEditingController();
+  final _firstNameEditingController = TextEditingController();
+  final _lastNameEditingController = TextEditingController();
+  final _emailEditingController = TextEditingController();
+  final _phoneEditingController = TextEditingController();
 
-  final FocusNode _viewNode = FocusNode();
-  final FocusNode _usernameNode = FocusNode();
-  final FocusNode _firstNameNode = FocusNode();
-  final FocusNode _lastNameNode = FocusNode();
-  final FocusNode _emailNode = FocusNode();
-  final FocusNode _phoneNode = FocusNode();
+  final _viewNode = FocusNode();
+  final _usernameNode = FocusNode();
+  final _firstNameNode = FocusNode();
+  final _lastNameNode = FocusNode();
+  final _emailNode = FocusNode();
+  final _phoneNode = FocusNode();
+
   late CustomSnackBar _snackBar;
 
   late UserEditViewModel _viewModel;
@@ -43,7 +44,7 @@ class _UserEditPageState extends State<UserEditPage> {
   void initState() {
     super.initState();
     _viewModel = sl<UserEditViewModel>();
-    _viewModel.states.stream.listen((state) {
+    _viewModel.states.listen((state) {
       if (state is ErrorState) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           _snackBar.hideAll();
@@ -311,7 +312,7 @@ class _UserEditPageState extends State<UserEditPage> {
   }
 
   _buildUpdateButton(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: double.infinity,
       height: 50,
       child: ButtonWidget(

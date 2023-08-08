@@ -4,12 +4,6 @@ abstract class UsersState {}
 
 class LoadingState extends UsersState {}
 
-class LoggedState extends UsersState {
-  final bool isLogin;
-
-  LoggedState(this.isLogin);
-}
-
 class ListUserState extends UsersState {
   final List<User> data;
 

@@ -1,16 +1,15 @@
 import 'dart:async';
 import 'package:common/core/error/failures.dart';
-import 'package:um/core/view_model.dart';
+import 'package:um/core/view_model/view_model.dart';
 import 'package:um/domain/usecases/auth/logout_user.dart';
 
 import 'error_state.dart';
 
-class ErrorViewModel with ViewModel {
-  final LogoutUser logoutUseCase;
+class ErrorViewModel extends ViewModel {
 
-  ErrorViewModel({
-    required this.logoutUseCase,
-  });
+  final LogoutUser _logoutUser;
+
+  ErrorViewModel(this._logoutUser);
 
   final _states = StreamController<ErrorState>();
 
@@ -18,23 +17,31 @@ class ErrorViewModel with ViewModel {
 
   void logout() {
     _onLoading();
-    logoutUseCase().then((value) => value.fold(onSuccess: _onLogout, onError: _onError));
+    _logoutUser().then((value) => value.fold(onSuccess: _onLogout, onError: _onError));
   }
 
   _onLoading() {
-    _states.sink.add(LoadingState());
+    if (!_states.isClosed) {
+      _states.sink.add(LoadingState());
+    }
   }
 
   _onLogout(bool data) {
-    _states.sink.add((LogoutState()));
+    if (!_states.isClosed) {
+      _states.sink.add((LogoutState()));
+    }
   }
 
   _onError(Failure failure) {
-    _states.sink.add((LogoutState()));
+    if (!_states.isClosed) {
+      _states.sink.add((LogoutState()));
+    }
   }
+
 
   @override
   dispose() {
+    super.dispose();
     _states.close();
   }
 }

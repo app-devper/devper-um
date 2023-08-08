@@ -9,16 +9,16 @@ import 'package:um/domain/model/user/user.dart';
 import 'package:um/domain/repositories/user_repository.dart';
 
 class UserRepositoryImpl implements UserRepository {
-  final UmService service;
+  final UmService _service;
 
   UserRepositoryImpl({
-    required this.service,
-  });
+    required UmService service,
+  }) : _service = service;
 
   @override
   Future<User> getUserInfo() async {
     var mapper = UserMapper();
-    final response = await service.getUserInfo();
+    final response = await _service.getUserInfo();
     if (response.isSuccessful) {
       final result = mapper.toUserDomain(jsonDecode(response.body));
       return result;
@@ -30,7 +30,7 @@ class UserRepositoryImpl implements UserRepository {
   @override
   Future<List<User>> getUsers() async {
     var mapper = UserMapper();
-    final response = await service.getUsers();
+    final response = await _service.getUsers();
     if (response.isSuccessful) {
       final result = mapper.toUsersDomain(jsonDecode(response.body));
       return result;
@@ -42,7 +42,7 @@ class UserRepositoryImpl implements UserRepository {
   @override
   Future<User> getUserById(String userId) async {
     var mapper = UserMapper();
-    final response = await service.getUserById(userId);
+    final response = await _service.getUserById(userId);
     if (response.isSuccessful) {
       final result = mapper.toUserDomain(jsonDecode(response.body));
       return result;
@@ -54,7 +54,7 @@ class UserRepositoryImpl implements UserRepository {
   @override
   Future<bool> changePassword(ChangePasswordParam param) async {
     var mapper = UserMapper();
-    final response = await service.changePassword(mapper.toChangePasswordRequest(param));
+    final response = await _service.changePassword(mapper.toChangePasswordRequest(param));
     if (response.isSuccessful) {
       return true;
     } else {
@@ -65,7 +65,7 @@ class UserRepositoryImpl implements UserRepository {
   @override
   Future<User> removeUserById(String userId) async {
     var mapper = UserMapper();
-    final response = await service.removeUserById(userId);
+    final response = await _service.removeUserById(userId);
     if (response.isSuccessful) {
       final result = mapper.toUserDomain(jsonDecode(response.body));
       return result;
@@ -77,7 +77,7 @@ class UserRepositoryImpl implements UserRepository {
   @override
   Future<User> updateRoleById(UpdateRoleParam param) async {
     var mapper = UserMapper();
-    final response = await service.updateRoleById(param.userId, mapper.toUpdateRoleRequest(param.role));
+    final response = await _service.updateRoleById(param.userId, mapper.toUpdateRoleRequest(param.role));
     if (response.isSuccessful) {
       final result = mapper.toUserDomain(jsonDecode(response.body));
       return result;
@@ -89,7 +89,7 @@ class UserRepositoryImpl implements UserRepository {
   @override
   Future<User> updateStatusById(UpdateStatusParam param) async {
     var mapper = UserMapper();
-    final response = await service.updateStatusById(param.userId, mapper.toUpdateStatusRequest(param.status));
+    final response = await _service.updateStatusById(param.userId, mapper.toUpdateStatusRequest(param.status));
     if (response.isSuccessful) {
       final result = mapper.toUserDomain(jsonDecode(response.body));
       return result;
@@ -101,7 +101,7 @@ class UserRepositoryImpl implements UserRepository {
   @override
   Future<User> updateUserById(UpdateUserParam param) async {
     var mapper = UserMapper();
-    final response = await service.updateUserById(param.userId, mapper.toUpdateUserRequest(param.userParam));
+    final response = await _service.updateUserById(param.userId, mapper.toUpdateUserRequest(param.userParam));
     if (response.isSuccessful) {
       final result = mapper.toUserDomain(jsonDecode(response.body));
       return result;
@@ -113,7 +113,7 @@ class UserRepositoryImpl implements UserRepository {
   @override
   Future<User> updateUserInfo(UserParam param) async {
     var mapper = UserMapper();
-    final response = await service.updateUserInfo(mapper.toUpdateUserRequest(param));
+    final response = await _service.updateUserInfo(mapper.toUpdateUserRequest(param));
     if (response.isSuccessful) {
       final result = mapper.toUserDomain(jsonDecode(response.body));
       return result;
@@ -125,7 +125,7 @@ class UserRepositoryImpl implements UserRepository {
   @override
   Future<User> createUser(CreateParam param) async {
     var mapper = UserMapper();
-    final response = await service.createUser(mapper.toCreateUserRequest(param));
+    final response = await _service.createUser(mapper.toCreateUserRequest(param));
     if (response.isSuccessful) {
       final result = mapper.toUserDomain(jsonDecode(response.body));
       return result;

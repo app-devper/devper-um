@@ -2,7 +2,7 @@ import 'package:common/core/widget/button_widget.dart';
 import 'package:common/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:um/container.dart';
-import 'package:um/core/stacked_view.dart';
+import 'package:um/core/view_model/stacked_view.dart';
 import 'package:um/presentation/constants.dart';
 
 import 'error_state.dart';

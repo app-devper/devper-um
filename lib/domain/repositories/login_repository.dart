@@ -6,7 +6,7 @@ import 'package:um/domain/model/auth/system.dart';
 abstract class LoginRepository {
   Future<Login> loginUser(LoginParam param);
 
-  Future<Login> keepAlive();
+  Future<Login> keepAlive(String accessToken);
 
   Future<bool> logoutUser();
 

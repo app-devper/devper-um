@@ -1,12 +1,14 @@
 import 'dart:async';
 import 'package:common/core/error/failures.dart';
+import 'package:um/core/view_model/view_model.dart';
 import 'package:um/domain/model/user/param.dart';
 import 'package:um/domain/model/user/user.dart';
 import 'package:um/domain/usecases/user/get_user_info.dart';
 import 'package:um/domain/usecases/user/update_user_info.dart';
-import 'package:um/presentation/user/info/user_info_state.dart';
 
-class UserInfoViewModel {
+import 'user_info_state.dart';
+
+class UserInfoViewModel extends ViewModel {
   final GetUserInfo getUserInfoUseCase;
   final UpdateUserInfo updateUserInfoUseCase;
 
@@ -17,7 +19,7 @@ class UserInfoViewModel {
 
   final _states = StreamController<UserInfoState>();
 
-  StreamController<UserInfoState> get states => _states;
+  Stream<UserInfoState> get states => _states.stream;
 
   void getUserInfo() {
     getUserInfoUseCase(Param()).then((value) => {
@@ -31,20 +33,18 @@ class UserInfoViewModel {
 
   void updateUserInfo(UserParam param) {
     _onLoading();
-    updateUserInfoUseCase(param)
-        .then((value) => {
-              value.fold((l) {
-                _onError(l);
-              }, (r) {
-                _onEditUser(r);
-              })
-            });
+    updateUserInfoUseCase(param).then((value) => {
+          value.fold((l) {
+            _onError(l);
+          }, (r) {
+            _onEditUser(r);
+          })
+        });
   }
 
   _onLoading() {
     _states.sink.add(LoadingState());
   }
-
 
   _onGetUser(User data) {
     if (!_states.isClosed) {
@@ -64,7 +64,9 @@ class UserInfoViewModel {
     }
   }
 
+  @override
   dispose() {
+    super.dispose();
     _states.close();
   }
 }

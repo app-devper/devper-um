@@ -20,20 +20,20 @@ class UserAddPage extends StatefulWidget {
 class _UserAddPageState extends State<UserAddPage> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  final TextEditingController _usernameEditingController = TextEditingController();
-  final TextEditingController _passwordEditingController = TextEditingController();
-  final TextEditingController _firstNameEditingController = TextEditingController();
-  final TextEditingController _lastNameEditingController = TextEditingController();
-  final TextEditingController _emailEditingController = TextEditingController();
-  final TextEditingController _phoneEditingController = TextEditingController();
+  final usernameEditingController = TextEditingController();
+  final passwordEditingController = TextEditingController();
+  final firstNameEditingController = TextEditingController();
+  final lastNameEditingController = TextEditingController();
+  final emailEditingController = TextEditingController();
+  final phoneEditingController = TextEditingController();
 
-  final FocusNode _viewNode = FocusNode();
-  final FocusNode _usernameNode = FocusNode();
-  final FocusNode _passwordNode = FocusNode();
-  final FocusNode _firstNameNode = FocusNode();
-  final FocusNode _lastNameNode = FocusNode();
-  final FocusNode _emailNode = FocusNode();
-  final FocusNode _phoneNode = FocusNode();
+  final viewNode = FocusNode();
+  final usernameNode = FocusNode();
+  final passwordNode = FocusNode();
+  final firstNameNode = FocusNode();
+  final lastNameNode = FocusNode();
+  final emailNode = FocusNode();
+  final phoneNode = FocusNode();
 
   late CustomSnackBar _snackBar;
 
@@ -45,7 +45,7 @@ class _UserAddPageState extends State<UserAddPage> {
     super.initState();
     _viewModel = sl<UserAddViewModel>();
     _appSession = sl<AppSessionProvider>();
-    _viewModel.states.stream.listen((state) {
+    _viewModel.states.listen((state) {
       if (state is ErrorState) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           _snackBar.hideAll();
@@ -61,8 +61,9 @@ class _UserAddPageState extends State<UserAddPage> {
         hideLoadingDialog(context);
         WidgetsBinding.instance.addPostFrameCallback((_) {
           _snackBar.hideAll();
-          _snackBar.showSnackBar(text: "Add " + state.data.username + " success");
+          _snackBar.showSnackBar(text: "Add ${state.data.username} success");
         });
+
         _clearForm();
       }
     });
@@ -70,12 +71,12 @@ class _UserAddPageState extends State<UserAddPage> {
 
   @override
   void dispose() {
-    _usernameNode.dispose();
-    _passwordNode.dispose();
-    _firstNameNode.dispose();
-    _lastNameNode.dispose();
-    _phoneNode.dispose();
-    _emailNode.dispose();
+    usernameNode.dispose();
+    passwordNode.dispose();
+    firstNameNode.dispose();
+    lastNameNode.dispose();
+    phoneNode.dispose();
+    emailNode.dispose();
     _viewModel.dispose();
     super.dispose();
   }
@@ -123,66 +124,66 @@ class _UserAddPageState extends State<UserAddPage> {
         ),
         _buildTextFormField(
           context,
-          _usernameNode,
-          _usernameEditingController,
+          usernameNode,
+          usernameEditingController,
           "Username*",
           TextInputType.text,
-          _passwordNode,
+          passwordNode,
         ),
         Padding(
           padding: EdgeInsets.only(top: 12),
         ),
         _buildTextFormField(
           context,
-          _passwordNode,
-          _passwordEditingController,
+          passwordNode,
+          passwordEditingController,
           "Password*",
           TextInputType.text,
-          _firstNameNode,
+          firstNameNode,
         ),
         Padding(
           padding: EdgeInsets.only(top: 12),
         ),
         _buildTextFormField(
           context,
-          _firstNameNode,
-          _firstNameEditingController,
+          firstNameNode,
+          firstNameEditingController,
           "FirstName",
           TextInputType.text,
-          _lastNameNode,
+          lastNameNode,
         ),
         Padding(
           padding: EdgeInsets.only(top: 12),
         ),
         _buildTextFormField(
           context,
-          _lastNameNode,
-          _lastNameEditingController,
+          lastNameNode,
+          lastNameEditingController,
           "LastName",
           TextInputType.text,
-          _phoneNode,
+          phoneNode,
         ),
         Padding(
           padding: EdgeInsets.only(top: 12),
         ),
         _buildTextFormField(
           context,
-          _phoneNode,
-          _phoneEditingController,
+          phoneNode,
+          phoneEditingController,
           "Phone",
           TextInputType.phone,
-          _emailNode,
+          emailNode,
         ),
         Padding(
           padding: EdgeInsets.only(top: 12),
         ),
         _buildTextFormField(
           context,
-          _emailNode,
-          _emailEditingController,
+          emailNode,
+          emailEditingController,
           "Email",
           TextInputType.emailAddress,
-          _viewNode,
+          viewNode,
         ),
       ],
     );
@@ -197,7 +198,7 @@ class _UserAddPageState extends State<UserAddPage> {
     FocusNode nextNode,
   ) {
     final Size size = MediaQuery.of(context).size;
-    return Container(
+    return SizedBox(
       width: size.width,
       height: 50,
       child: TextFormField(
@@ -205,7 +206,7 @@ class _UserAddPageState extends State<UserAddPage> {
         controller: controller,
         keyboardType: textInputType,
         decoration: InputDecoration(
-          focusedBorder: new OutlineInputBorder(
+          focusedBorder: OutlineInputBorder(
             borderRadius: new BorderRadius.circular(4.0),
             borderSide: new BorderSide(
               color: CustomColor.textFieldBackground,
@@ -239,13 +240,13 @@ class _UserAddPageState extends State<UserAddPage> {
   }
 
   _buildAddButton(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: double.infinity,
       height: 50,
       child: ButtonWidget(
-        key: Key("Add"),
+        key: const Key("Add"),
         onClicked: () {
-          FocusScope.of(context).requestFocus(_viewNode);
+          FocusScope.of(context).requestFocus(viewNode);
           _viewModel.createUser(_getCreateParam());
         },
         text: "Add",
@@ -255,22 +256,22 @@ class _UserAddPageState extends State<UserAddPage> {
 
   _getCreateParam() {
     return CreateParam(
-      username: _usernameEditingController.text,
-      password: _passwordEditingController.text,
+      username: usernameEditingController.text,
+      password: passwordEditingController.text,
       clientId: _appSession.getClientId(),
-      firstName: _firstNameEditingController.text,
-      lastName: _lastNameEditingController.text,
-      phone: _phoneEditingController.text,
-      email: _emailEditingController.text,
+      firstName: firstNameEditingController.text,
+      lastName: lastNameEditingController.text,
+      phone: phoneEditingController.text,
+      email: emailEditingController.text,
     );
   }
 
   _clearForm() {
-    _usernameEditingController.text = "";
-    _passwordEditingController.text = "";
-    _firstNameEditingController.text = "";
-    _lastNameEditingController.text = "";
-    _phoneEditingController.text = "";
-    _emailEditingController.text = "";
+    usernameEditingController.text = "";
+    passwordEditingController.text = "";
+    firstNameEditingController.text = "";
+    lastNameEditingController.text = "";
+    phoneEditingController.text = "";
+    emailEditingController.text = "";
   }
 }

@@ -8,6 +8,12 @@ class LoadingState extends ChangePasswordState {}
 
 class UpdatePasswordState extends ChangePasswordState {}
 
+class ValidateErrorState extends ChangePasswordState {
+  final String message;
+
+  ValidateErrorState({required this.message});
+}
+
 class ErrorState extends ChangePasswordState {
   final String message;
 

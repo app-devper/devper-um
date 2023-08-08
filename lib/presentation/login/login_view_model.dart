@@ -2,57 +2,56 @@ import 'dart:async';
 
 import 'package:common/app_config.dart';
 import 'package:common/core/error/failures.dart';
-import 'package:flutter/material.dart';
+import 'package:um/core/view_model/view_model.dart';
 import 'package:um/domain/model/auth/login.dart';
 import 'package:um/domain/model/auth/param.dart';
-import 'package:um/domain/usecases/auth/fetch_token.dart';
+import 'package:um/domain/model/auth/system.dart';
+import 'package:um/domain/usecases/auth/keep_alive.dart';
+import 'package:um/domain/usecases/auth/get_system.dart';
 import 'package:um/domain/usecases/auth/login_user.dart';
-import 'package:um/core/view_model.dart';
 
 import 'login_state.dart';
 
-class LoginViewModel with ViewModel {
-  final TextEditingController usernameEditingController = TextEditingController();
-  final TextEditingController passwordEditingController = TextEditingController();
+class LoginViewModel extends ViewModel {
+  final AppConfig _config;
+  final LoginUser _loginUser;
+  final KeepAlive _keepAlive;
+  final GetSystem _getSystem;
 
-  final FocusNode usernameNode = FocusNode();
-  final FocusNode passwordNode = FocusNode();
-  final FocusNode viewNode = FocusNode();
-
-  final LoginUser loginUserUseCase;
-  final FetchToken fetchTokenUseCase;
-  final AppConfig config;
-
-  LoginViewModel({
-    required this.config,
-    required this.loginUserUseCase,
-    required this.fetchTokenUseCase,
-  });
+  LoginViewModel(
+    this._config,
+    this._loginUser,
+    this._keepAlive,
+    this._getSystem,
+  );
 
   final _states = StreamController<LoginState>();
 
   Stream<LoginState> get states => _states.stream;
 
-  final _init = StreamController<bool>();
+  final _init = StreamController<Failure>();
 
-  Stream<bool> get initLoading => _init.stream;
+  Stream<Failure> get init => _init.stream;
 
-  void login() {
+  AppConfig get config => _config;
+
+  login(LoginParam param) {
     _onLoading();
-    loginUserUseCase(_getLoginParam()).then((value) => value.fold(onSuccess: _onLogged, onError: _onError));
+    _loginUser(param).then((value) => value.fold(onSuccess: _onLogged, onError: _onError));
   }
 
-  void fetchToken() {
-    _onInit();
-    fetchTokenUseCase().then((value) => value.fold(onSuccess: _onLogged, onError: _onNotLogged));
+  keepAlive() {
+    _keepAlive().then((value) => value.fold(onSuccess: _onLogged, onError: _onNotLogged));
   }
 
-  _onInit() {
-    _init.sink.add(true);
+  getSystem() {
+    _getSystem().then((value) => value.fold(onSuccess: _onSystem, onError: _onError));
   }
 
   _onLoading() {
-    _states.sink.add(LoadingState());
+    if (!_states.isClosed) {
+      _states.sink.add(LoadingState());
+    }
   }
 
   _onLogged(Login data) {
@@ -69,28 +68,21 @@ class LoginViewModel with ViewModel {
 
   _onNotLogged(Failure failure) {
     if (!_init.isClosed) {
-      _init.sink.add(false);
+      _init.sink.add(failure);
     }
   }
 
-  _getLoginParam() {
-    return LoginParam(
-      username: usernameEditingController.text,
-      password: passwordEditingController.text,
-      system: config.system,
-    );
+  _onSystem(System data) {
+    if (!_states.isClosed) {
+      _states.sink.add(SystemState(data));
+    }
   }
+
 
   @override
   dispose() {
+    super.dispose();
     _init.close();
     _states.close();
-
-    usernameNode.dispose();
-    passwordNode.dispose();
-    viewNode.dispose();
-
-    usernameEditingController.dispose();
-    passwordEditingController.dispose();
   }
 }

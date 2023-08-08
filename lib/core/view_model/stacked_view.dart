@@ -1,7 +1,7 @@
 
 import 'package:flutter/widgets.dart';
-import 'package:um/core/view_model.dart';
-import 'package:um/core/view_model_builder.dart';
+import 'view_model.dart';
+import 'view_model_builder.dart';
 
 abstract class StackedView<T extends ViewModel> extends StatelessWidget {
   const StackedView({Key? key}) : super(key: key);
