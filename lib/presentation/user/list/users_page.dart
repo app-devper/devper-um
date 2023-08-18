@@ -10,8 +10,10 @@ import 'package:um/presentation/user/argument.dart';
 import 'users_state.dart';
 import 'users_view_model.dart';
 
-class UsersPage extends StackedView<UsersViewModel> {
-  const UsersPage({super.key});
+class UsersPage extends StackedView<UsersViewModel, UsersState> {
+  late CustomSnackBar snackBar;
+
+  UsersPage({super.key});
 
   @override
   Widget builder(BuildContext context, UsersViewModel viewModel) {
@@ -40,21 +42,21 @@ class UsersPage extends StackedView<UsersViewModel> {
 
   @override
   UsersViewModel viewModelBuilder(BuildContext context) {
-    final snackBar = CustomSnackBar(key: const Key("snackBar"), context: context);
+    snackBar = CustomSnackBar(key: const Key("snackBar"), context: context);
     final viewModel = sl<UsersViewModel>();
-    viewModel.states.listen((state) {
-      if (state is ErrorState) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          snackBar.hideAll();
-          snackBar.showErrorSnackBar(state.message);
-        });
-        viewModel.setUsers(List.empty());
-      } else if (state is LoadingState) {
-      } else if (state is ListUserState) {
-        viewModel.setUsers(state.data);
-      }
-    });
     return viewModel;
+  }
+
+  @override
+  onEventEmitted(BuildContext context, UsersViewModel viewModel, UsersState event) {
+    if (event is ErrorState) {
+      snackBar.hideAll();
+      snackBar.showErrorSnackBar(event.message);
+      viewModel.setUsers(List.empty());
+    } else if (event is LoadingState) {
+    } else if (event is ListUserState) {
+      viewModel.setUsers(event.data);
+    }
   }
 
   _buildAction(BuildContext context, UsersViewModel viewModel) {

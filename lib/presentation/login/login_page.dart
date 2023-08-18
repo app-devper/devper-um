@@ -1,78 +1,62 @@
-import 'package:common/app_config.dart';
 import 'package:common/core/widget/button_widget.dart';
 import 'package:common/core/widget/dialog_widget.dart';
 import 'package:common/theme.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:provider/provider.dart';
-import 'package:um/container.dart';
 import 'package:um/core/ext/extensions.dart';
 import 'package:um/core/widget/obscure_state.dart';
 import 'package:um/domain/model/auth/param.dart';
 import 'package:um/presentation/constants.dart';
-import 'package:um/core/view_model/stacked_view.dart';
+import 'package:um/presentation/login/hook/use_keep_alive.dart';
+import 'package:um/presentation/login/hook/use_login.dart';
+import 'package:um/presentation/core/hook/use_app_config.dart';
 
-import 'login_state.dart';
 import 'login_view_mixin.dart';
-import 'login_view_model.dart';
 
-class LoginPage extends StackedView<LoginViewModel> with LoginViewMixin {
-
+class LoginPage extends HookWidget with LoginViewMixin {
   LoginPage({super.key});
 
   @override
-  void onViewModelReady(LoginViewModel viewModel) {
-    viewModel.keepAlive();
-  }
-
-  @override
-  LoginViewModel viewModelBuilder(BuildContext context) {
-    final viewModel = sl<LoginViewModel>();
-    viewModel.states.listen((state) {
-      if (state is LoadingState) {
-        showLoadingDialog(context);
-      } else if (state is LoggedState) {
-        viewModel.getSystem();
-      } else if (state is SystemState) {
-        hideLoadingDialog(context);
-        if (state.data.systemCode == viewModel.config.system) {
-          Navigator.pushNamedAndRemoveUntil(context, viewModel.config.home, (r) => false);
-        } else {
-          Navigator.pushNamedAndRemoveUntil(context, routeError, (r) => false);
-        }
-      } else if (state is ErrorState) {
-        hideLoadingDialog(context);
-        showAlertDialog(context, message: state.message, onConfirm: () {});
-      }
-    });
-    return viewModel;
-  }
-
-  @override
-  onDispose() {
-    disposeView();
-  }
-
-  @override
-  Widget builder(BuildContext context, LoginViewModel viewModel) {
+  Widget build(BuildContext context) {
+    useEffect(() {
+      return () {
+        disposeView();
+      };
+    }, []);
     return GestureDetector(
       onTap: () => FocusScope.of(context).requestFocus(viewNode),
       child: Scaffold(
-        body: AnnotatedRegion<SystemUiOverlayStyle>(
-          value: SystemUiOverlayStyle.dark.copyWith(
-            statusBarColor: CustomColor.statusBarColor,
-          ),
-          child: _buildBody(context, viewModel),
-        ),
+        body: _buildBody(context),
       ),
     );
   }
 
-  _buildBody(BuildContext context, LoginViewModel viewModel) {
-    return viewModel.init.toWidgetLoading(widgetBuilder: (_) => _buildLogin(context, viewModel));
+  _buildBody(BuildContext context) {
+    final config = useAppConfig();
+
+    nextHome(next) {
+      if (next) {
+        Navigator.pushNamedAndRemoveUntil(context, config.home, (r) => false);
+      } else {
+        Navigator.pushNamedAndRemoveUntil(context, routeError, (r) => false);
+      }
+    }
+
+    final login = useLogin(context, onSuccess: (next) {
+      nextHome(next);
+    }, onError: (message) {
+      showAlertDialog(context, message: message, onConfirm: () {});
+    });
+
+    final keepAlive = useKeepAlive(onSuccess: (next) {
+      nextHome(next);
+    });
+
+    return keepAlive.toWidgetLoading(widgetBuilder: (_) => _buildLogin(context, login));
   }
 
-  _buildLogin(BuildContext context, LoginViewModel viewModel) {
+  _buildLogin(BuildContext context, Function login) {
     final Size size = MediaQuery.of(context).size;
     final bool isKeyboardOpen = (MediaQuery.of(context).viewInsets.bottom > 0);
     return Container(
@@ -84,16 +68,16 @@ class LoginPage extends StackedView<LoginViewModel> with LoginViewMixin {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
-            _buildHeader(isKeyboardOpen, viewModel),
-            _buildUsernameField(context, viewModel),
+            _buildHeader(isKeyboardOpen),
+            _buildUsernameField(context),
             const Padding(
               padding: EdgeInsets.only(top: 12),
             ),
-            _buildPasswordField(context, viewModel),
+            _buildPasswordField(context),
             const Padding(
               padding: EdgeInsets.only(top: 14),
             ),
-            _buildLoginButton(viewModel),
+            _buildLoginButton(login),
             const Padding(
               padding: EdgeInsets.only(top: 14),
             ),
@@ -103,7 +87,8 @@ class LoginPage extends StackedView<LoginViewModel> with LoginViewMixin {
     );
   }
 
-  _buildHeader(bool isKeyboardOpen, LoginViewModel viewModel) {
+  _buildHeader(bool isKeyboardOpen) {
+    final config = useAppConfig();
     if (!isKeyboardOpen) {
       return Column(
         children: <Widget>[
@@ -114,7 +99,7 @@ class LoginPage extends StackedView<LoginViewModel> with LoginViewMixin {
             width: 120,
             height: 120,
             child: Image(
-              image: AssetImage(viewModel.config.logo),
+              image: AssetImage(config.logo),
             ),
           ),
           const Padding(
@@ -122,7 +107,7 @@ class LoginPage extends StackedView<LoginViewModel> with LoginViewMixin {
           ),
           Text(
             "Login",
-            style: CustomTheme.mainTheme.textTheme.headline6,
+            style: CustomTheme.mainTheme.textTheme.titleLarge,
           ),
           const Padding(
             padding: EdgeInsets.only(top: 14),
@@ -135,17 +120,18 @@ class LoginPage extends StackedView<LoginViewModel> with LoginViewMixin {
     );
   }
 
-  _buildLoginButton(LoginViewModel viewModel) {
+  _buildLoginButton(Function login) {
+    final config = useAppConfig();
     return ButtonWidget(
       key: const Key("login"),
       text: "LOGIN",
       onClicked: () {
-        viewModel.login(_getLoginParam(viewModel));
+        login(_getLoginParam(config.system));
       },
     );
   }
 
-  _buildUsernameField(BuildContext context, LoginViewModel viewModel) {
+  _buildUsernameField(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
     return SizedBox(
       width: size.width,
@@ -163,7 +149,7 @@ class LoginPage extends StackedView<LoginViewModel> with LoginViewMixin {
     );
   }
 
-  _buildPasswordField(BuildContext context, LoginViewModel viewModel) {
+  _buildPasswordField(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return ChangeNotifierProvider(
       create: (context) => ObscureState(),
@@ -201,11 +187,11 @@ class LoginPage extends StackedView<LoginViewModel> with LoginViewMixin {
     FocusScope.of(context).requestFocus(nextFocus);
   }
 
-  _getLoginParam(LoginViewModel viewModel) {
+  _getLoginParam(String system) {
     return LoginParam(
       username: usernameEditingController.text,
       password: passwordEditingController.text,
-      system: viewModel.config.system,
+      system: system,
     );
   }
 }

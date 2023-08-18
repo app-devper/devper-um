@@ -17,6 +17,7 @@ dependencies:
     git:
       url: git@github.com:app-devper/common.git
   provider: ^6.0.5
+  flutter_hooks: ^0.20.0
 
 dev_dependencies:
   flutter_test:

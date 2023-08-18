@@ -2,20 +2,18 @@ import 'package:common/core/widget/dialog_widget.dart';
 import 'package:common/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:um/container.dart';
-import 'package:um/core/view_model/stacked_view.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:um/presentation/constants.dart';
+import 'package:um/presentation/core/hook/use_logout.dart';
 
-import 'user_home_state.dart';
-import 'user_home_view_model.dart';
-
-class UserHomePage extends StackedView<UserHomeViewModel> {
+class UserHomePage extends HookWidget {
   const UserHomePage({super.key});
 
   @override
-  Widget builder(BuildContext context, UserHomeViewModel viewModel) {
+  Widget build(BuildContext context) {
+    final viewNode = useFocusNode();
     return GestureDetector(
-      onTap: () => FocusScope.of(context).requestFocus(viewModel.viewNode),
+      onTap: () => FocusScope.of(context).requestFocus(viewNode),
       child: Scaffold(
         appBar: AppBar(
           iconTheme: CustomTheme.mainTheme.iconTheme,
@@ -23,9 +21,9 @@ class UserHomePage extends StackedView<UserHomeViewModel> {
           centerTitle: true,
           title: Text(
             "Home",
-            style: CustomTheme.mainTheme.textTheme.headline5,
+            style: CustomTheme.mainTheme.textTheme.headlineSmall,
           ),
-          actions: _buildAction(context, viewModel),
+          actions: _buildAction(context),
         ),
         body: AnnotatedRegion<SystemUiOverlayStyle>(
           value: SystemUiOverlayStyle.dark.copyWith(
@@ -37,33 +35,29 @@ class UserHomePage extends StackedView<UserHomeViewModel> {
     );
   }
 
-  @override
-  onDispose() {}
-
-  @override
-  onViewModelReady(UserHomeViewModel viewModel) {}
-
-  @override
-  UserHomeViewModel viewModelBuilder(BuildContext context) {
-    final viewModel = sl<UserHomeViewModel>();
-    viewModel.states.listen((state) {
-      if (state is ErrorState) {
-        hideLoadingDialog(context);
-      } else if (state is LoadingState) {
-        showLoadingDialog(context);
-      } else if (state is LogoutState) {
-        hideLoadingDialog(context);
-        Navigator.popAndPushNamed(context, routeLogin);
-      }
+  _buildAction(BuildContext context) {
+    final logout = useLogout(onSuccess: () {
+      Navigator.popAndPushNamed(context, routeLogin);
     });
-    return viewModel;
-  }
-
-  _buildAction(BuildContext context, UserHomeViewModel viewModel) {
     return [
       PopupMenuButton<int>(
         icon: const Icon(Icons.more_vert),
-        onSelected: (item) => _handleClick(context, item, viewModel),
+        onSelected: (item) {
+          switch (item) {
+            case 0:
+              Navigator.pushNamed(context, routeUsers);
+              break;
+            case 1:
+              Navigator.pushNamed(context, routeUserInfo);
+              break;
+            case 2:
+              Navigator.pushNamed(context, routeChangePassword);
+              break;
+            case 3:
+              logout();
+              break;
+          }
+        },
         itemBuilder: (context) => [
           const PopupMenuItem<int>(value: 0, child: Text("User List")),
           const PopupMenuItem<int>(value: 1, child: Text("User Info")),
@@ -72,23 +66,6 @@ class UserHomePage extends StackedView<UserHomeViewModel> {
         ],
       ),
     ];
-  }
-
-  _handleClick(BuildContext context, int item, UserHomeViewModel viewModel) {
-    switch (item) {
-      case 0:
-        Navigator.pushNamed(context, routeUsers);
-        break;
-      case 1:
-        Navigator.pushNamed(context, routeUserInfo);
-        break;
-      case 2:
-        Navigator.pushNamed(context, routeChangePassword);
-        break;
-      case 3:
-        viewModel.logout();
-        break;
-    }
   }
 
   _buildBody(BuildContext context) {

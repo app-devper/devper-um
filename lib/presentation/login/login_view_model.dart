@@ -12,7 +12,7 @@ import 'package:um/domain/usecases/auth/login_user.dart';
 
 import 'login_state.dart';
 
-class LoginViewModel extends ViewModel {
+class LoginViewModel extends ViewModel<LoginState> {
   final AppConfig _config;
   final LoginUser _loginUser;
   final KeepAlive _keepAlive;
@@ -24,10 +24,6 @@ class LoginViewModel extends ViewModel {
     this._keepAlive,
     this._getSystem,
   );
-
-  final _states = StreamController<LoginState>();
-
-  Stream<LoginState> get states => _states.stream;
 
   final _init = StreamController<Failure>();
 
@@ -49,21 +45,15 @@ class LoginViewModel extends ViewModel {
   }
 
   _onLoading() {
-    if (!_states.isClosed) {
-      _states.sink.add(LoadingState());
-    }
+    emitEvent(LoadingState());
   }
 
   _onLogged(Login data) {
-    if (!_states.isClosed) {
-      _states.sink.add(LoggedState(login: data));
-    }
+    emitEvent(LoggedState(login: data));
   }
 
   _onError(Failure failure) {
-    if (!_states.isClosed) {
-      _states.sink.add(ErrorState(message: failure.getMessage()));
-    }
+    emitEvent(ErrorState(message: failure.getMessage()));
   }
 
   _onNotLogged(Failure failure) {
@@ -73,16 +63,12 @@ class LoginViewModel extends ViewModel {
   }
 
   _onSystem(System data) {
-    if (!_states.isClosed) {
-      _states.sink.add(SystemState(data));
-    }
+    emitEvent(SystemState(data));
   }
-
 
   @override
   dispose() {
     super.dispose();
     _init.close();
-    _states.close();
   }
 }

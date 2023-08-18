@@ -8,7 +8,7 @@ import 'package:um/presentation/constants.dart';
 import 'error_state.dart';
 import 'error_view_model.dart';
 
-class ErrorPage extends StackedView<ErrorViewModel> {
+class ErrorPage extends StackedView<ErrorViewModel, ErrorState> {
   const ErrorPage({super.key});
 
   @override
@@ -30,11 +30,13 @@ class ErrorPage extends StackedView<ErrorViewModel> {
   @override
   ErrorViewModel viewModelBuilder(BuildContext context) {
     final viewModel = sl<ErrorViewModel>();
-    viewModel.states.listen((state) {
-      if (state is LoadingState) {
-      } else if (state is LogoutState) {}
-    });
     return viewModel;
+  }
+
+  @override
+  onEventEmitted(BuildContext context, ErrorViewModel viewModel, ErrorState event) {
+    if (event is LoadingState) {
+    } else if (event is LogoutState) {}
   }
 
   SafeArea _buildBody(BuildContext context) {

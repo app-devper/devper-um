@@ -8,6 +8,7 @@ import 'package:um/presentation/user/argument.dart';
 import 'package:um/presentation/user/change_password/change_password_page.dart';
 import 'package:um/presentation/user/edit/user_edit_page.dart';
 import 'package:um/presentation/user/info/user_info_page.dart';
+import 'package:um/presentation/user/list/users_hook_page.dart';
 import 'package:um/presentation/user/list/users_page.dart';
 import 'package:um/presentation/user/main/user_home_page.dart';
 
@@ -19,7 +20,7 @@ class RouterUm {
       case routeChangePassword:
         return MaterialPageRoute(builder: (_) => const ChangePasswordPage());
       case routeUsers:
-        return MaterialPageRoute(builder: (_) => const UsersPage());
+        return MaterialPageRoute(builder: (_) => const UsersHookPage());
       case routeUserInfo:
         return MaterialPageRoute(builder: (_) => const UserInfoPage());
       case routeUserAdd:
@@ -28,7 +29,7 @@ class RouterUm {
         final args = settings.arguments as UserArgument;
         return MaterialPageRoute(builder: (_) => UserEditPage(userId: args.userId));
       case routeUserHome:
-        return MaterialPageRoute(builder: (_) => const UserHomePage());
+        return MaterialPageRoute(builder: (_) => UserHomePage());
       case routeError:
         return MaterialPageRoute(builder: (_) => const ErrorPage());
       default:
