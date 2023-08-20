@@ -1,24 +1,25 @@
 import 'package:common/core/error/failures.dart';
 import 'package:common/core/result/result.dart';
 import 'package:common/core/usecase/usecase.dart';
-import 'package:um/domain/manager/session_manager.dart';
+import 'package:common/data/session/app_session_provider.dart';
 import 'package:um/domain/model/auth/system.dart';
 import 'package:um/domain/repositories/login_repository.dart';
 
 class GetSystem implements BaseUseCase<System> {
   final LoginRepository repository;
-  final SessionManager manager;
+  final AppSessionProvider appSession;
 
   GetSystem({
     required this.repository,
-    required this.manager,
+    required this.appSession,
   });
 
   @override
   FutureResult<System, Failure> call() async {
     try {
       final result = await repository.getSystem();
-      await manager.setSystem(result);
+      appSession.setClientId(result.clientId);
+      appSession.setHostApp(result.host);
       return Result.success(result);
     } on Exception catch (e) {
       return Result.error(Failure(e));

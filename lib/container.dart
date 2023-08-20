@@ -14,8 +14,6 @@ import 'package:um/data/datasource/network/um_service.dart';
 import 'package:um/data/datasource/session/app_session.dart';
 import 'package:um/data/repositories/login_repository_impl.dart';
 import 'package:um/data/repositories/user_repository_impl.dart';
-import 'package:um/data/session/session_manager_impl.dart';
-import 'package:um/domain/manager/session_manager.dart';
 import 'package:um/domain/repositories/login_repository.dart';
 import 'package:um/domain/repositories/user_repository.dart';
 import 'package:um/domain/usecases/auth/keep_alive.dart';
@@ -32,14 +30,6 @@ import 'package:um/domain/usecases/user/get_users.dart';
 import 'package:um/domain/usecases/user/remove_user_by_id.dart';
 import 'package:um/domain/usecases/user/update_user_by_id.dart';
 import 'package:um/domain/usecases/user/update_user_info.dart';
-import 'package:um/presentation/error/error_view_model.dart';
-import 'package:um/presentation/login/login_view_model.dart';
-import 'package:um/presentation/user/add/user_add_view_model.dart';
-import 'package:um/presentation/user/change_password/change_password_view_model.dart';
-import 'package:um/presentation/user/edit/user_edit_view_model.dart';
-import 'package:um/presentation/user/info/user_info_view_model.dart';
-import 'package:um/presentation/user/list/users_view_model.dart';
-import 'package:um/presentation/user/main/user_home_view_model.dart';
 
 final sl = getIt(); // sl is referred to as Service Locator
 
@@ -54,14 +44,16 @@ void setupLogging() {
 
 // Dependency injection
 Future<void> initCore(AppConfig config) async {
+
+  // Users UniqueKey
+  sl.registerLazySingleton(() => UniqueKey());
+
   // AppConfig
   sl.registerLazySingleton(() => config);
 
   // Session
   AppSession appSession = AppSession(sl());
   sl.registerLazySingleton<AppSessionProvider>(() => appSession);
-
-  sl.registerLazySingleton<SessionManager>(() => SessionManagerImpl(sl()));
 
   // Network
   sl.registerLazySingleton<NetworkConfig>(() => AppNetworkConfig(appSession: sl()));
@@ -82,48 +74,16 @@ Future<void> initCore(AppConfig config) async {
 }
 
 Future<void> initUm() async {
-  // ViewModel
-  sl.registerFactory(() => LoginViewModel(sl(), sl(), sl(), sl()));
-  sl.registerFactory(() => UserHomeViewModel(sl()));
-  sl.registerFactory(
-    () => ChangePasswordViewModel(
-      changePasswordUseCase: sl(),
-    ),
-  );
-  sl.registerFactory(
-    () => UsersViewModel(
-      getUsersUseCase: sl(),
-    ),
-  );
-  sl.registerFactory(
-    () => UserInfoViewModel(
-      getUserInfoUseCase: sl(),
-      updateUserInfoUseCase: sl(),
-    ),
-  );
-  sl.registerFactory(
-    () => UserAddViewModel(
-      createUserUseCase: sl(),
-    ),
-  );
-  sl.registerFactory(
-    () => UserEditViewModel(
-      removeUserByIdUseCase: sl(),
-      updateUserByIdUseCase: sl(),
-      getUserByIdUseCase: sl(),
-    ),
-  );
-  sl.registerFactory(() => ErrorViewModel(sl()));
 
   // Use Cases
-  sl.registerFactory(() => LoginUser(repository: sl(), manager: sl()));
-  sl.registerFactory(() => KeepAlive(repository: sl(), manager: sl()));
-  sl.registerFactory(() => LogoutUser(repository: sl(), manager: sl()));
+  sl.registerFactory(() => LoginUser(repository: sl(), appSession: sl()));
+  sl.registerFactory(() => KeepAlive(repository: sl(), appSession: sl()));
+  sl.registerFactory(() => LogoutUser(repository: sl(), appSession: sl()));
 
   sl.registerFactory(() => GetLogin(repository: sl()));
   sl.registerFactory(() => GetRole(repository: sl()));
 
-  sl.registerFactory(() => GetSystem(repository: sl(), manager: sl()));
+  sl.registerFactory(() => GetSystem(repository: sl(), appSession: sl()));
 
   sl.registerFactory(() => GetUsers(repository: sl()));
   sl.registerFactory(() => GetUserInfo(repository: sl()));

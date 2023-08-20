@@ -1,3 +1,4 @@
+import 'package:common/core/error/exception.dart';
 import 'package:common/core/error/failures.dart';
 import 'package:common/core/usecase/usecase.dart';
 import 'package:dartz/dartz.dart';
@@ -13,6 +14,9 @@ class UpdateUserInfo implements UseCase<UserParam, User> {
   @override
   Future<Either<Failure, User>> call(UserParam param) async {
     try {
+      if (param.firstName.isEmpty || param.lastName.isEmpty) {
+        throw AppException("Invalid parameter");
+      }
       final result = await repository.updateUserInfo(param);
       return Right(result);
     } on Exception catch (e) {

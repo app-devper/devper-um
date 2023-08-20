@@ -1,3 +1,4 @@
+import 'package:common/core/error/exception.dart';
 import 'package:common/core/error/failures.dart';
 import 'package:common/core/usecase/usecase.dart';
 import 'package:dartz/dartz.dart';
@@ -12,6 +13,9 @@ class ChangePassword extends UseCase<ChangePasswordParam, bool> {
   @override
   Future<Either<Failure, bool>> call(ChangePasswordParam param) async {
     try {
+      if (param.oldPassword.isEmpty || param.newPassword.isEmpty) {
+        throw AppException("Invalid parameter");
+      }
       final result = await repository.changePassword(param);
       return Right(result);
     } on Exception catch (e) {

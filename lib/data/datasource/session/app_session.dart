@@ -1,4 +1,3 @@
-
 import 'package:common/app_config.dart';
 import 'package:common/data/session/app_session_provider.dart';
 
@@ -9,7 +8,7 @@ class AppSession extends AppSessionProvider {
   String _accessToken = "";
   String _locale = "th";
 
-  AppSession(AppConfig config){
+  AppSession(AppConfig config) {
     _hostUm = config.apiUrl;
   }
 
@@ -50,7 +49,7 @@ class AppSession extends AppSessionProvider {
 
   @override
   void setHostApp(String hostApp) {
-   _hostApp = hostApp;
+    _hostApp = hostApp;
   }
 
   @override
@@ -63,4 +62,10 @@ class AppSession extends AppSessionProvider {
     _locale = locale;
   }
 
+  @override
+  void clear() {
+    _hostApp = "";
+    _clientId = "";
+    _accessToken = "";
+  }
 }

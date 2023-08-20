@@ -1,3 +1,4 @@
+import 'package:common/core/error/exception.dart';
 import 'package:common/core/error/failures.dart';
 import 'package:common/core/usecase/usecase.dart';
 import 'package:dartz/dartz.dart';
@@ -13,6 +14,9 @@ class CreateUser implements UseCase<CreateParam, User> {
   @override
   Future<Either<Failure, User>> call(CreateParam param) async {
     try {
+      if (param.password.isEmpty || param.username.isEmpty) {
+        throw AppException("Invalid parameter");
+      }
       final result = await repository.createUser(param);
       return Right(result);
     } on Exception catch (e) {

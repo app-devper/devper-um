@@ -1,26 +1,29 @@
 import 'package:common/core/error/failures.dart';
 import 'package:common/core/result/result.dart';
 import 'package:common/core/usecase/usecase.dart';
-import 'package:um/domain/manager/session_manager.dart';
-import 'package:um/domain/model/auth/login.dart';
+import 'package:common/data/session/app_session_provider.dart';
+import 'package:um/domain/model/auth/system.dart';
 import 'package:um/domain/repositories/login_repository.dart';
 
-class KeepAlive implements BaseUseCase<Login> {
+class KeepAlive implements BaseUseCase<System> {
   final LoginRepository repository;
-  final SessionManager manager;
+  final AppSessionProvider appSession;
 
-  KeepAlive( {
+  KeepAlive({
     required this.repository,
-    required this.manager,
+    required this.appSession,
   });
 
   @override
-  FutureResult<Login, Failure> call() async {
+  FutureResult<System, Failure> call() async {
     try {
       final accessToken = await repository.getToken();
       final result = await repository.keepAlive(accessToken);
-      await manager.setLogin(result);
-      return Result.success(result);
+      appSession.setAccessToken(result.accessToken);
+      final system = await repository.getSystem();
+      appSession.setClientId(system.clientId);
+      appSession.setHostApp(system.host);
+      return Result.success(system);
     } on Exception catch (e) {
       return Result.error(Failure(e));
     }
