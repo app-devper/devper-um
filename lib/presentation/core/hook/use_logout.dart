@@ -4,7 +4,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:um/container.dart';
 import 'package:um/domain/usecases/auth/logout_user.dart';
 
-useLogoutLoading(BuildContext context, {required Function() onSuccess}) {
+Function() useLogout(BuildContext context, {required Function() onSuccess}) {
   loading() {
     showLoadingDialog(context);
   }

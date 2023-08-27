@@ -43,7 +43,7 @@ buildAddUser(String clientId,Function(User) onAdded) {
       onAdded(user);
     }
 
-    final add = useAddUserLoading(context, onSuccess: success);
+    final add = useAddUser(context, onSuccess: success);
 
     getCreateParam() {
       return CreateParam(

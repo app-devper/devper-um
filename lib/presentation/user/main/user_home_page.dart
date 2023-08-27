@@ -17,7 +17,7 @@ class UserHomePage extends HookWidget {
       Navigator.popAndPushNamed(context, routeLogin);
     }
 
-    final logout = useLogoutLoading(context, onSuccess: success);
+    final logout = useLogout(context, onSuccess: success);
     List<Widget> buildAction() {
       return [
         PopupMenuButton<int>(

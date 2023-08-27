@@ -14,7 +14,7 @@ class UsersPage extends HookWidget {
   Widget build(BuildContext context) {
     final reloadKey = useState(UniqueKey());
     final controller = useStreamController<List<User>>();
-    final users = useUsersStream(reloadKey, controller);
+    final users = useUsers(reloadKey, controller);
 
     reload(result) {
       if (result != null && result is bool) {
@@ -44,12 +44,6 @@ class UsersPage extends HookWidget {
         ),
       ];
     }
-
-    useEffect(() {
-      return () {
-        controller.close();
-      };
-    }, []);
 
     return Scaffold(
       appBar: AppBar(

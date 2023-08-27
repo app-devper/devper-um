@@ -6,7 +6,7 @@ import 'package:um/container.dart';
 import 'package:um/domain/model/user/param.dart';
 import 'package:um/domain/usecases/user/change_password.dart';
 
-useChangePasswordLoading(
+Function(ChangePasswordParam) useChangePassword(
   BuildContext context, {
   required Function(bool) onSuccess,
 }) {
@@ -24,7 +24,7 @@ useChangePasswordLoading(
     showAlertDialog(context, failure.getMessage(), () {});
   }
 
-  changePassword(ChangePasswordParam param) {
+  call(ChangePasswordParam param) {
     final changePassword = sl<ChangePassword>();
     loading();
     final result = changePassword(param);
@@ -32,7 +32,7 @@ useChangePasswordLoading(
   }
 
   final cachedFunction = useCallback((ChangePasswordParam param) {
-    changePassword(param);
+    call(param);
   }, []);
   return cachedFunction;
 }

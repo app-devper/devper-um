@@ -70,7 +70,7 @@ buildLogin(bool isKeyboardOpen, Function(System) onSuccess) {
       );
     }
 
-    final login = useLoginLoading(context, onSuccess: onSuccess);
+    final login = useLogin(context, onSuccess: onSuccess);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,

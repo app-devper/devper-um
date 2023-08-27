@@ -1,11 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:um/container.dart';
 import 'package:um/domain/model/user/param.dart';
 import 'package:um/domain/model/user/user.dart';
 import 'package:um/domain/usecases/user/get_user_info.dart';
 
-Stream<User> useUserInfo() {
-  final state = useStreamController<User>();
+Stream<User> useUserInfo(StreamController<User> state) {
 
   getUserInfo() {
     final getUserInfo = sl<GetUserInfo>();
@@ -22,7 +23,6 @@ Stream<User> useUserInfo() {
   useEffect(() {
     getUserInfo();
     return () {
-      state.close();
     };
   }, []);
   return state.stream;

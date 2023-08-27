@@ -7,7 +7,7 @@ import 'package:um/domain/model/user/param.dart';
 import 'package:um/domain/model/user/user.dart';
 import 'package:um/domain/usecases/user/create_user.dart';
 
-useAddUserLoading(
+Function(CreateParam) useAddUser(
   BuildContext context, {
   required Function(User) onSuccess,
 }) {

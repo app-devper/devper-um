@@ -6,7 +6,7 @@ import 'package:um/container.dart';
 import 'package:um/domain/model/user/user.dart';
 import 'package:um/domain/usecases/user/remove_user_by_id.dart';
 
-useRemoveUserLoading(
+Function(String) useRemoveUser(
   BuildContext context, {
   required Function(User) onSuccess,
 }) {
@@ -24,7 +24,7 @@ useRemoveUserLoading(
     showAlertDialog(context, failure.getMessage(), () {});
   }
 
-  removeUserById(String param) {
+  call(String param) {
     final removeUserById = sl<RemoveUserById>();
     loading();
     final result = removeUserById(param);
@@ -32,7 +32,7 @@ useRemoveUserLoading(
   }
 
   final cachedFunction = useCallback((String param) {
-    removeUserById(param);
+    call(param);
   }, []);
   return cachedFunction;
 }

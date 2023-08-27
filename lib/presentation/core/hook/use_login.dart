@@ -7,7 +7,7 @@ import 'package:um/domain/model/auth/param.dart';
 import 'package:um/domain/model/auth/system.dart';
 import 'package:um/domain/usecases/auth/login_user.dart';
 
-useLoginLoading(
+Function(LoginParam) useLogin(
   BuildContext context, {
   required Function(System) onSuccess,
 }) {
@@ -25,7 +25,7 @@ useLoginLoading(
     showAlertDialog(context, failure.getMessage(), () {});
   }
 
-  login(LoginParam param) {
+  call(LoginParam param) {
     final loginUser = sl<LoginUser>();
     loading();
     final result = loginUser(param);
@@ -33,7 +33,7 @@ useLoginLoading(
   }
 
   final cachedFunction = useCallback((LoginParam param) {
-    login(param);
+    call(param);
   }, []);
   return cachedFunction;
 }

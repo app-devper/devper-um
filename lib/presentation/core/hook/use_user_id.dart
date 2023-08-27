@@ -1,9 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:um/container.dart';
 import 'package:um/domain/model/user/user.dart';
 import 'package:um/domain/usecases/user/get_user_by_id.dart';
 
-Stream<User> useUserId(userId) {
+Stream<User> useUserId(userId, StreamController<User> state) {
   final state = useStreamController<User>();
 
   getUserById() {
@@ -21,7 +23,6 @@ Stream<User> useUserId(userId) {
   useEffect(() {
     getUserById();
     return () {
-      state.close();
     };
   }, [userId]);
   return state.stream;

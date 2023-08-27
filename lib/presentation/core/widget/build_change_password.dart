@@ -29,7 +29,7 @@ buildChangePassword() {
       );
     }
 
-    final changePassword = useChangePasswordLoading(context, onSuccess: success);
+    final changePassword = useChangePassword(context, onSuccess: success);
 
     validate() {
       if (oldPasswordController.text.isNotEmpty && newPasswordController.text.isNotEmpty && confirmPasswordController.text.isNotEmpty) {
