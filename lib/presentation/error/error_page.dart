@@ -1,17 +1,15 @@
+import 'package:common/core/theme/theme.dart';
 import 'package:common/core/widget/button_widget.dart';
-import 'package:common/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:um/core/ext/extensions.dart';
 import 'package:um/presentation/constants.dart';
-import 'package:um/presentation/core/hook/use_auto_logout.dart';
 
 class ErrorPage extends HookWidget {
   const ErrorPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final autoLogout = useAutoLogout();
 
     buildError(Function() onClicked) {
       buildToLoginButton() {
@@ -56,14 +54,10 @@ class ErrorPage extends HookWidget {
           height: size.height,
           width: size.width,
           padding: const EdgeInsets.all(20),
-          child: autoLogout.toWidgetLoading(widgetBuilder: (_) {
-            return buildError(() {
-              Navigator.popAndPushNamed(context, routeLogin);
-            });
-          }),
         ),
       );
     }
+
 
     return Scaffold(
       appBar: AppBar(

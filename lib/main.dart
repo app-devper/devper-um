@@ -1,10 +1,10 @@
-import 'package:common/app_config.dart';
+import 'package:common/config/app_config.dart';
+import 'package:common/core/theme/theme.dart';
 import 'package:common/localizations/localizations_delegate.dart';
-import 'package:common/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:um/presentation/constants.dart';
-import 'package:um/presentation/router.dart';
+import 'package:um/core/router/router.dart';
 import 'package:um/container.dart' as di;
 
 void main() async {
@@ -33,7 +33,7 @@ class _MyAppState extends State<DevperUm> {
       title: 'DevperUM',
       theme: CustomTheme.mainTheme,
       onGenerateRoute: RouterUm.generateRoute,
-      initialRoute: routeLogin,
+      initialRoute: routeSplash,
       locale: const Locale("th"),
       localizationsDelegates: [
         CommonLocalizationsDelegate(),

@@ -1,12 +1,13 @@
-import 'package:common/core/error/failures.dart';
+import 'package:common/core/error/failure.dart';
 import 'package:common/core/utils/extension.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:um/container.dart';
-import 'package:um/domain/model/user/user.dart';
-import 'package:um/domain/usecases/user/remove_user_by_id.dart';
+import 'package:um/domain/entities/user/param.dart';
+import 'package:um/domain/entities/user/user.dart';
+import 'package:um/domain/repositories/user_repository.dart';
 
-Function(String) useRemoveUser(
+Function(CreateParam) useAddUser(
   BuildContext context, {
   required Function(User) onSuccess,
 }) {
@@ -24,15 +25,17 @@ Function(String) useRemoveUser(
     showAlertDialog(context, failure.getMessage(), () {});
   }
 
-  call(String param) {
-    final removeUserById = sl<RemoveUserById>();
+  createUser(CreateParam param) async {
+    final userRepo = sl<UserRepository>();
     loading();
-    final result = removeUserById(param);
-    result.then((value) => value.fold((l) => error(l), (r) => success(r)));
+    try {
+      final result = await userRepo.createUser(param);
+      success(result);
+    } on Exception catch (e) {
+      error(toFailure(e));
+    }
   }
 
-  final cachedFunction = useCallback((String param) {
-    call(param);
-  }, []);
+  final cachedFunction = useCallback(createUser, []);
   return cachedFunction;
 }

@@ -1,6 +1,6 @@
-import 'package:common/data/network/network_config.dart';
-import 'package:common/data/session/app_session_provider.dart';
+import 'package:common/core/network/network_config.dart';
 import 'package:flutter/foundation.dart';
+import 'package:um/data/datasource/session/app_session.dart';
 
 class AppNetworkConfig extends NetworkConfig {
   final AppSessionProvider _appSession;
@@ -24,18 +24,4 @@ class AppNetworkConfig extends NetworkConfig {
     return kDebugMode;
   }
 
-  @override
-  String getClientId() {
-    return _appSession.getClientId();
-  }
-
-  @override
-  String getHostApp() {
-    return _appSession.getHostApp();
-  }
-
-  @override
-  String getHostUm() {
-    return _appSession.getHostUm();
-  }
 }

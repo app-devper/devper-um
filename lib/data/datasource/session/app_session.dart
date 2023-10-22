@@ -1,20 +1,32 @@
-import 'package:common/app_config.dart';
-import 'package:common/data/session/app_session_provider.dart';
+import 'package:common/config/app_config.dart';
+
+abstract class AppSessionProvider {
+
+  String getClientId();
+
+  void setClientId(String clientId);
+
+  String getHostApp();
+
+  void setHostApp(String hostApp);
+
+  String getHostUm();
+
+  String getAccessToken();
+
+  void setAccessToken(String accessToken);
+
+  void clear();
+}
 
 class AppSession extends AppSessionProvider {
   String _hostUm = "";
   String _hostApp = "";
   String _clientId = "";
   String _accessToken = "";
-  String _locale = "th";
 
   AppSession(AppConfig config) {
     _hostUm = config.apiUrl;
-  }
-
-  @override
-  String getLocale() {
-    return _locale;
   }
 
   @override
@@ -50,16 +62,6 @@ class AppSession extends AppSessionProvider {
   @override
   void setHostApp(String hostApp) {
     _hostApp = hostApp;
-  }
-
-  @override
-  void setHostUm(String hostUm) {
-    _hostUm = hostUm;
-  }
-
-  @override
-  void setLocale(String locale) {
-    _locale = locale;
   }
 
   @override

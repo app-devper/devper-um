@@ -4,7 +4,7 @@ description: A new Flutter module project.
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.17.0 <3.0.0"
+  sdk: ">=3.0.6 <4.0.0"
 
 dependencies:
   flutter:
@@ -13,6 +13,8 @@ dependencies:
     sdk: flutter
 
   shared_preferences: ^2.0.5
+  logging: any
+  http: any
   common:
     git:
       url: git@github.com:app-devper/devper-cm.git
@@ -36,8 +38,8 @@ flutter:
   fonts:
     - family: Roboto
       fonts:
-        - asset: packages/common/font/roboto_regular.ttf
-        - asset: packages/common/font/roboto_bold.ttf
+        - asset: packages/common/assets/font/roboto_regular.ttf
+        - asset: packages/common/assets/font/roboto_bold.ttf
           weight: 700
 
   module:

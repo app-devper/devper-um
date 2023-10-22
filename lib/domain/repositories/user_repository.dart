@@ -1,6 +1,6 @@
 
-import 'package:um/domain/model/user/param.dart';
-import 'package:um/domain/model/user/user.dart';
+import 'package:um/domain/entities/user/param.dart';
+import 'package:um/domain/entities/user/user.dart';
 
 abstract class UserRepository {
   Future<User> getUserInfo();

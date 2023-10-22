@@ -3,6 +3,7 @@ import 'package:um/presentation/error/error_page.dart';
 import 'package:um/presentation/not_found/not_found_page.dart';
 import 'package:um/presentation/constants.dart';
 import 'package:um/presentation/login/login_page.dart';
+import 'package:um/presentation/splash/splash_page.dart';
 import 'package:um/presentation/user/add/user_add_page.dart';
 import 'package:um/presentation/user/argument.dart';
 import 'package:um/presentation/user/change_password/change_password_page.dart';
@@ -14,6 +15,8 @@ import 'package:um/presentation/user/main/user_home_page.dart';
 class RouterUm {
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
+      case routeSplash:
+        return MaterialPageRoute(builder: (_) => const SplashPage());
       case routeLogin:
         return MaterialPageRoute(builder: (_) => const LoginPage());
       case routeChangePassword:

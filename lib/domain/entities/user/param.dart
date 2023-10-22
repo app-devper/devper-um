@@ -1,5 +1,3 @@
-class Param {}
-
 class CreateParam {
   final String username;
   final String password;

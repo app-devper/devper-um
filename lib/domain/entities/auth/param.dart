@@ -10,5 +10,3 @@ class LoginParam {
   });
 }
 
-class GetLoginParam {}
-

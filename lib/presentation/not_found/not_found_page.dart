@@ -1,5 +1,5 @@
+import 'package:common/core/theme/theme.dart';
 import 'package:flutter/material.dart';
-import 'package:common/theme.dart';
 
 class NotFoundPage extends StatelessWidget {
   const NotFoundPage({super.key});
@@ -57,4 +57,3 @@ class NotFoundPage extends StatelessWidget {
     );
   }
 }
-

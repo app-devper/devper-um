@@ -1,13 +1,12 @@
-import 'package:common/core/utils/extension.dart';
+import 'package:common/core/theme/theme.dart';
 import 'package:common/core/widget/custom_snack_bar.dart';
-import 'package:common/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:um/domain/model/user/user.dart';
+import 'package:um/domain/entities/user/user.dart';
+import 'package:um/hooks/use_update_user_info.dart';
+import 'package:um/hooks/use_user_info.dart';
 import 'package:um/presentation/constants.dart';
-import 'package:um/presentation/core/hook/use_update_user.dart';
 import 'package:um/presentation/core/widget/build_user.dart';
-import 'package:um/presentation/core/hook/use_user_info.dart';
 
 class UserInfoPage extends HookWidget {
   const UserInfoPage({super.key});
@@ -17,8 +16,7 @@ class UserInfoPage extends HookWidget {
     final snackBar = CustomSnackBar(key: const Key("snackbar"), context: context);
 
     final viewNode = useFocusNode();
-    final stream = useStreamController<User>();
-    final userInfo = useUserInfo(stream);
+    final userInfo = useUserInfo();
 
     final edit = useState(false);
 
@@ -26,7 +24,6 @@ class UserInfoPage extends HookWidget {
       snackBar.hideAll();
       snackBar.showSnackBar(text: "Update ${user.username} success");
       edit.value = true;
-      stream.add(user);
     }
 
     final update = useUpdateUserInfo(context, onSuccess: success);
@@ -34,8 +31,8 @@ class UserInfoPage extends HookWidget {
     buildBody() {
       return SingleChildScrollView(
         padding: const EdgeInsets.all(defaultPagePadding),
-        child: StreamBuilder(
-          stream: userInfo,
+        child: FutureBuilder(
+          future: userInfo,
           builder: (BuildContext context, AsyncSnapshot<User> snapshot) {
             if (snapshot.hasError) {
               return Container();

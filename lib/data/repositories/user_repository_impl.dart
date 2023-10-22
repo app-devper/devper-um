@@ -1,11 +1,12 @@
 import 'dart:convert';
 
+import 'package:common/core/error/exception.dart';
+import 'package:common/core/network/exception.dart';
 import 'package:common/core/utils/utils.dart';
-import 'package:common/data/network/exception.dart';
 import 'package:um/data/datasource/network/um_service.dart';
 import 'package:um/data/repositories/user_mapper.dart';
-import 'package:um/domain/model/user/param.dart';
-import 'package:um/domain/model/user/user.dart';
+import 'package:um/domain/entities/user/param.dart';
+import 'package:um/domain/entities/user/user.dart';
 import 'package:um/domain/repositories/user_repository.dart';
 
 class UserRepositoryImpl implements UserRepository {
@@ -41,6 +42,9 @@ class UserRepositoryImpl implements UserRepository {
 
   @override
   Future<User> getUserById(String userId) async {
+    if (userId.isEmpty) {
+      throw AppException("Invalid parameter");
+    }
     var mapper = UserMapper();
     final response = await _service.getUserById(userId);
     if (response.isSuccessful) {
@@ -53,6 +57,9 @@ class UserRepositoryImpl implements UserRepository {
 
   @override
   Future<bool> changePassword(ChangePasswordParam param) async {
+    if (param.oldPassword.isEmpty || param.newPassword.isEmpty) {
+      throw AppException("Invalid parameter");
+    }
     var mapper = UserMapper();
     final response = await _service.changePassword(mapper.toChangePasswordRequest(param));
     if (response.isSuccessful) {
@@ -64,6 +71,9 @@ class UserRepositoryImpl implements UserRepository {
 
   @override
   Future<User> removeUserById(String userId) async {
+    if (userId.isEmpty) {
+      throw AppException("Invalid parameter");
+    }
     var mapper = UserMapper();
     final response = await _service.removeUserById(userId);
     if (response.isSuccessful) {
@@ -100,6 +110,9 @@ class UserRepositoryImpl implements UserRepository {
 
   @override
   Future<User> updateUserById(UpdateUserParam param) async {
+    if (param.userParam.firstName.isEmpty || param.userParam.lastName.isEmpty) {
+      throw AppException("Invalid parameter");
+    }
     var mapper = UserMapper();
     final response = await _service.updateUserById(param.userId, mapper.toUpdateUserRequest(param.userParam));
     if (response.isSuccessful) {
@@ -112,6 +125,9 @@ class UserRepositoryImpl implements UserRepository {
 
   @override
   Future<User> updateUserInfo(UserParam param) async {
+    if (param.firstName.isEmpty || param.lastName.isEmpty) {
+      throw AppException("Invalid parameter");
+    }
     var mapper = UserMapper();
     final response = await _service.updateUserInfo(mapper.toUpdateUserRequest(param));
     if (response.isSuccessful) {
@@ -124,6 +140,9 @@ class UserRepositoryImpl implements UserRepository {
 
   @override
   Future<User> createUser(CreateParam param) async {
+    if (param.password.isEmpty || param.username.isEmpty) {
+      throw AppException("Invalid parameter");
+    }
     var mapper = UserMapper();
     final response = await _service.createUser(mapper.toCreateUserRequest(param));
     if (response.isSuccessful) {
@@ -133,5 +152,4 @@ class UserRepositoryImpl implements UserRepository {
       throw HttpException(response);
     }
   }
-
 }

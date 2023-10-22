@@ -1,36 +1,35 @@
+import 'package:common/core/theme/theme.dart';
 import 'package:common/core/utils/extension.dart';
 import 'package:common/core/widget/custom_snack_bar.dart';
-import 'package:common/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:um/domain/model/user/user.dart';
+import 'package:um/domain/entities/user/user.dart';
+import 'package:um/hooks/use_remove_user.dart';
+import 'package:um/hooks/use_update_user.dart';
+import 'package:um/hooks/use_user_id.dart';
 import 'package:um/presentation/constants.dart';
-
-import 'package:um/presentation/core/hook/use_remove_user.dart';
-import 'package:um/presentation/core/hook/use_update_user.dart';
-import 'package:um/presentation/core/hook/use_user_id.dart';
 import 'package:um/presentation/core/widget/build_user.dart';
 
 class UserEditPage extends HookWidget {
   final String userId;
 
-  const UserEditPage({super.key, required this.userId});
+  const UserEditPage({
+    super.key,
+    required this.userId,
+  });
 
   @override
   Widget build(BuildContext context) {
     final snackBar = CustomSnackBar(key: const Key("snackbar"), context: context);
 
     final viewNode = useFocusNode();
-    final stream = useStreamController<User>();
-    final userInfo = useUserId(userId, stream);
-    final userSnapshot = useStream(userInfo);
+    final userInfo = useUserId(userId);
     final edit = useState(false);
 
     success(User user) {
       snackBar.hideAll();
       snackBar.showSnackBar(text: "Update ${user.username} success");
       edit.value = true;
-      stream.add(user);
     }
 
     final update = useUpdateUser(context, onSuccess: success);
@@ -38,8 +37,8 @@ class UserEditPage extends HookWidget {
     buildBody() {
       return SingleChildScrollView(
         padding: const EdgeInsets.all(defaultPagePadding),
-        child: StreamBuilder(
-          stream: userInfo,
+        child: FutureBuilder(
+          future: userInfo,
           builder: (BuildContext context, AsyncSnapshot<User> snapshot) {
             if (snapshot.hasError) {
               return Container();
@@ -72,11 +71,11 @@ class UserEditPage extends HookWidget {
       });
     }
 
-    buildAction(User user) {
+    buildAction() {
       return [
         IconButton(
           onPressed: () {
-            confirm(user);
+            userInfo.then((value) => confirm(value));
           },
           icon: const Icon(Icons.delete),
         ),
@@ -94,7 +93,7 @@ class UserEditPage extends HookWidget {
             "Edit User",
             style: CustomTheme.mainTheme.textTheme.headline5,
           ),
-          actions: userSnapshot.hasData ? buildAction(userSnapshot.requireData) : [],
+          actions: buildAction(),
         ),
         body: buildBody(),
       ),

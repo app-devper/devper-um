@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:um/core/ext/extensions.dart';
-import 'package:um/domain/model/user/user.dart';
+import 'package:um/domain/entities/user/user.dart';
 
-buildUsers(Stream<List<User>> users, Function(User) onTap) {
+buildUsers(Future<List<User>> users, Function(User) onTap) {
   buildUserList() {
     return users.toWidgetLoading(
       widgetBuilder: (data) => Expanded(

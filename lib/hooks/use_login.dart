@@ -1,11 +1,11 @@
-import 'package:common/core/error/failures.dart';
+import 'package:common/core/error/failure.dart';
 import 'package:common/core/utils/extension.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:um/container.dart';
-import 'package:um/domain/model/auth/param.dart';
-import 'package:um/domain/model/auth/system.dart';
-import 'package:um/domain/usecases/auth/login_user.dart';
+import 'package:um/domain/entities/auth/param.dart';
+import 'package:um/domain/entities/auth/system.dart';
+import 'package:um/domain/repositories/login_repository.dart';
 
 Function(LoginParam) useLogin(
   BuildContext context, {
@@ -25,15 +25,18 @@ Function(LoginParam) useLogin(
     showAlertDialog(context, failure.getMessage(), () {});
   }
 
-  call(LoginParam param) {
-    final loginUser = sl<LoginUser>();
+  loginUser(LoginParam param) async {
+    final loginRepo = sl<LoginRepository>();
     loading();
-    final result = loginUser(param);
-    result.then((value) => value.fold(onSuccess: success, onError: error));
+    try {
+      final _ = await loginRepo.loginUser(param);
+      final result = await loginRepo.getSystem();
+      success(result);
+    } on Exception catch (e) {
+      error(toFailure(e));
+    }
   }
 
-  final cachedFunction = useCallback((LoginParam param) {
-    call(param);
-  }, []);
+  final cachedFunction = useCallback(loginUser, []);
   return cachedFunction;
 }

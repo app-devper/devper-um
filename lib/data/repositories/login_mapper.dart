@@ -1,8 +1,8 @@
 import 'dart:convert';
 
-import 'package:um/domain/model/auth/login.dart';
-import 'package:um/domain/model/auth/param.dart';
-import 'package:um/domain/model/auth/system.dart';
+import 'package:um/domain/entities/auth/login.dart';
+import 'package:um/domain/entities/auth/param.dart';
+import 'package:um/domain/entities/auth/system.dart';
 
 class LoginMapper {
   String toLoginRequest(LoginParam param) {

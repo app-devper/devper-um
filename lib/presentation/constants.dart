@@ -1,6 +1,7 @@
 const double defaultPagePadding = 20;
 
 //routes
+const String routeSplash = '/um-splash';
 const String routeLogin = '/um-login';
 const String routeUserHome = '/um-home';
 const String routeChangePassword = '/um-change-password';

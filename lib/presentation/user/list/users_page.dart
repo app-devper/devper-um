@@ -1,9 +1,8 @@
-import 'package:common/theme.dart';
+import 'package:common/core/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:um/domain/model/user/user.dart';
+import 'package:um/hooks/use_users.dart';
 import 'package:um/presentation/constants.dart';
-import 'package:um/presentation/core/hook/use_users.dart';
 import 'package:um/presentation/user/argument.dart';
 import 'package:um/presentation/core/widget/build_users.dart';
 
@@ -13,8 +12,8 @@ class UsersPage extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final reloadKey = useState(UniqueKey());
-    final controller = useStreamController<List<User>>();
-    final users = useUsers(reloadKey, controller);
+
+    final users = useUsers(reloadKey.value);
 
     reload(result) {
       if (result != null && result is bool) {

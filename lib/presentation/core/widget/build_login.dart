@@ -1,11 +1,11 @@
+import 'package:common/core/theme/theme.dart';
 import 'package:common/core/widget/button_widget.dart';
-import 'package:common/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:um/domain/model/auth/param.dart';
-import 'package:um/domain/model/auth/system.dart';
-import 'package:um/presentation/core/hook/use_app_config.dart';
-import 'package:um/presentation/core/hook/use_login.dart';
+import 'package:um/domain/entities/auth/param.dart';
+import 'package:um/domain/entities/auth/system.dart';
+import 'package:um/hooks/use_app_config.dart';
+import 'package:um/hooks/use_login.dart';
 import 'package:um/presentation/core/widget/build_widget.dart';
 
 buildLogin(bool isKeyboardOpen, Function(System) onSuccess) {
@@ -59,17 +59,6 @@ buildLogin(bool isKeyboardOpen, Function(System) onSuccess) {
       );
     }
 
-    buildLoginButton(Function() onClicked) {
-      return ButtonWidget(
-        key: const Key("login"),
-        text: "LOGIN",
-        onClicked: () {
-          FocusScope.of(context).requestFocus(viewNode);
-          onClicked();
-        },
-      );
-    }
-
     final login = useLogin(context, onSuccess: onSuccess);
 
     return Column(
@@ -89,19 +78,18 @@ buildLogin(bool isKeyboardOpen, Function(System) onSuccess) {
         const Padding(
           padding: EdgeInsets.only(top: 12),
         ),
-        buildPasswordField(
-          context,
-          passwordNode,
-          passwordEditingController,
-            "Password*",
-          viewNode
-        ),
+        buildPasswordField(context, passwordNode, passwordEditingController, "Password*", viewNode),
         const Padding(
           padding: EdgeInsets.only(top: 14),
         ),
-        buildLoginButton(() {
-          login(getLoginParam());
-        }),
+        ButtonWidget(
+          key: const Key("login"),
+          text: "LOGIN",
+          onClicked: () {
+            FocusScope.of(context).requestFocus(viewNode);
+            login(getLoginParam());
+          },
+        ),
         const Padding(
           padding: EdgeInsets.only(top: 14),
         ),
