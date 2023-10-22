@@ -69,7 +69,6 @@ Future<void> initUm() async {
   );
 
   // Service
-  final appSession = sl<AppSession>();
   sl.registerLazySingleton(
     () => UmService(
       networkConfig: sl(),
