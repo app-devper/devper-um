@@ -1,13 +1,13 @@
 import 'package:common/config/app_config.dart';
 import 'package:common/core/network/custom_client.dart';
 import 'package:common/core/network/http_logging_interceptor.dart';
-import 'package:common/core/network/network_config.dart';
 import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
 import 'package:common/injection.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:um/core/config/network_config.dart';
 import 'package:um/data/datasource/local/local_datasource.dart';
-import 'package:um/core/config/app_network_config.dart';
+import 'package:um/app_network_config.dart';
 import 'package:um/data/datasource/network/um_service.dart';
 import 'package:um/data/datasource/session/app_session.dart';
 import 'package:um/data/repositories/login_repository_impl.dart';
@@ -32,8 +32,7 @@ Future<void> initCore(AppConfig config) async {
   sl.registerLazySingleton(() => config);
 
   // Session
-  AppSession appSession = AppSession(sl());
-  sl.registerLazySingleton<AppSessionProvider>(() => appSession);
+  sl.registerLazySingleton<AppSession>(() =>  AppSession(sl()));
 
   // Network
   sl.registerLazySingleton<NetworkConfig>(() => AppNetworkConfig(appSession: sl()));
@@ -44,7 +43,7 @@ Future<void> initCore(AppConfig config) async {
 
   // LocalDataSource
   sl.registerLazySingleton<LocalDataSource>(
-    () => LocalDataSourceImpl(
+    () => LocalDataSource(
       sharedPreferences: sl(),
     ),
   );
@@ -70,10 +69,9 @@ Future<void> initUm() async {
   );
 
   // Service
-  final appSession = sl<AppSessionProvider>();
+  final appSession = sl<AppSession>();
   sl.registerLazySingleton(
     () => UmService(
-      baseUrl: appSession.getHostUm(),
       networkConfig: sl(),
       client: sl(),
     ),

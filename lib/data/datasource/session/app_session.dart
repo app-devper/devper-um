@@ -1,25 +1,6 @@
 import 'package:common/config/app_config.dart';
 
-abstract class AppSessionProvider {
-
-  String getClientId();
-
-  void setClientId(String clientId);
-
-  String getHostApp();
-
-  void setHostApp(String hostApp);
-
-  String getHostUm();
-
-  String getAccessToken();
-
-  void setAccessToken(String accessToken);
-
-  void clear();
-}
-
-class AppSession extends AppSessionProvider {
+class AppSession  {
   String _hostUm = "";
   String _hostApp = "";
   String _clientId = "";

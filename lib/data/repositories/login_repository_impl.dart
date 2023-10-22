@@ -15,12 +15,12 @@ import 'package:um/domain/repositories/login_repository.dart';
 class LoginRepositoryImpl implements LoginRepository {
   final UmService _service;
   final LocalDataSource _localDataSource;
-  final AppSessionProvider _appSession;
+  final AppSession _appSession;
 
   LoginRepositoryImpl({
     required UmService service,
     required LocalDataSource localDataSource,
-    required AppSessionProvider appSession,
+    required AppSession appSession,
   })  : _localDataSource = localDataSource,
         _service = service,
         _appSession = appSession;
