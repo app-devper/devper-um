@@ -48,6 +48,7 @@ class LoginRepositoryImpl implements LoginRepository {
     if (accessToken.isEmpty) {
       throw AppException("Please login");
     }
+    _appSession.setAccessToken(accessToken);
     var mapper = LoginMapper();
     final response = await _service.keepAlive();
     if (response.isSuccessful) {
